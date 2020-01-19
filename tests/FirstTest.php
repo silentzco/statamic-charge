@@ -4,7 +4,8 @@ use Silentz\Charge\Tests\TestCase;
 
 class FirstTest extends TestCase
 {
-    public function test_route()
+    /** @test */
+    public function route_exists()
     {
         $this->get('amazing')->assertOk();
     }
