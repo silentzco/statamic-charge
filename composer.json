@@ -32,14 +32,14 @@
         }
     },
     "require": {
-        "laravel/cashier": "^10.0",
-        "php": "^7.2",
-        "illuminate/support": "^6.8",
-        "statamic/cms": "^3.0@beta"
+        "laravel/cashier": "^10.0"
     },
     "require-dev": {
+        "statamic/cms": "3.0.*@beta",
+        "mockery/mockery": "~1.0",
         "orchestra/testbench": "^4.0",
         "phpunit/phpunit": "^8.5"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
