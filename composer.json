@@ -1,0 +1,41 @@
+{
+    "name": "silentz/charge",
+    "type": "statamic-addon",
+    "description": "One-time and subscriptions",
+    "authors": [
+        {
+            "name": "Erin Dalzell",
+            "email": "erin@silentz.co",
+            "homepage": "https://silentz.co",
+            "role": "Founder"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Silentz\\Charge\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Silentz\\Charge\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Charge",
+            "description": "Charge addon"
+        },
+        "laravel": {
+            "providers": [
+                "Silentz\\Charge\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "laravel/cashier": "^10.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0"
+    },
+    "minimum-stability": "dev"
+}
