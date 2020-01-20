@@ -3,6 +3,7 @@
 namespace Silentz\Charge\Tests;
 
 use Statamic\Statamic;
+use Statamic\Extend\Manifest;
 use Silentz\Charge\ServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
@@ -34,7 +35,7 @@ class TestCase extends OrchestraTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app->make(\Statamic\Extend\Manifest::class)->manifest = [
+        $app->make(Manifest::class)->manifest = [
             'silentz/charge' => [
                 'id' => 'silentz/charge',
                 'namespace' => 'Silentz\\Charge\\',
