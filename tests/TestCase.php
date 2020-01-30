@@ -5,6 +5,7 @@ namespace Silentz\Charge\Tests;
 use Statamic\Statamic;
 use Statamic\Extend\Manifest;
 use Silentz\Charge\ServiceProvider;
+use Illuminate\Support\Facades\Route;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -41,6 +42,8 @@ class TestCase extends OrchestraTestCase
                 'namespace' => 'Silentz\\Charge\\',
             ],
         ];
+
+        Route::get('/login')->name('login');
     }
 
     protected function resolveApplicationConfiguration($app)
