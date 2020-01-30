@@ -2,6 +2,7 @@
 
 namespace Silentz\Charge\Tests\Feature;
 
+use App\User;
 use Stripe\Plan;
 use Stripe\Coupon;
 use Stripe\Product;
@@ -113,7 +114,10 @@ class SubscriptionTest extends TestCase
     /** @test */
     public function checks_for_required_input()
     {
-        $this->post()->assertSessionHasErrors([
+        $response = $this->post(route('statamic.charge.subscription.store'), []);
+
+        $response->assertSessionHasErrors([
+            'user_id',
             'subscription',
             'plan',
             'payment_method',
@@ -123,6 +127,28 @@ class SubscriptionTest extends TestCase
     /** @test */
     public function can_create_simple_subscription()
     {
-        $this->assertTrue(true);
+        $user = $this->createCustomer('subscriptions_can_be_created');
+
+        dd(User::find(1));
+
+        $this->post(
+            route('statamic.charge.subscription.store'),
+            [
+                'user_id' => 'subscriptions_can_be_created',
+                'subscription' => 'test-subscription',
+                'plan' => static::$planId,
+                'payment_method' => 'pm_visa',
+            ]
+        )->assertOK();
+
+        $this->assertTrue($user->subscribed('test-subscription'));
+    }
+
+    /** @test */
+    public function can_call_endpoint()
+    {
+        $response = $this->post(route('statamic.foobar'));
+
+        $response->assertOK();
     }
 }
