@@ -2,17 +2,18 @@
 
 namespace Silentz\Charge\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Silentz\Charge\Http\Requests\CreateSubscriptionRequest;
 
 class SubscriptionController
 {
-    public function store(Request $request)
+    public function store(CreateSubscriptionRequest $request)
     {
-        $request->validate([
-            'subscription' => 'required',
-            'plan' => 'required',
-            'payment_method' => 'required',
-        ]);
+        $request->validated();
+
+        $request
+            ->getUser()
+            ->newSubscription($request->subscriptions, $request->plan)
+            ->create($request->payment_method);
 
         return 'ok';
     }
