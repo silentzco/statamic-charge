@@ -2,11 +2,11 @@
 
 namespace Silentz\Charge\Tests\Feature;
 
-use App\User;
 use Stripe\Plan;
 use Stripe\Coupon;
 use Stripe\Product;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
 
@@ -112,12 +112,28 @@ class SubscriptionTest extends TestCase
     }
 
     /** @test */
+    public function redirected_to_login_when_logged_out()
+    {
+        $this->post(
+            route('statamic.charge.subscription.store'),
+            [
+                'subscription' => 'test-subscription',
+                'plan' => static::$planId,
+                'payment_method' => 'pm_card_visa',
+            ]
+        )->assertRedirect(route('login'));
+    }
+
+    /** @test */
     public function checks_for_required_input()
     {
+        $user = $this->createCustomer('subscriptions_can_be_created');
+
+        Auth::login($user);
+
         $response = $this->post(route('statamic.charge.subscription.store'), []);
 
         $response->assertSessionHasErrors([
-            'user_id',
             'subscription',
             'plan',
             'payment_method',
@@ -129,26 +145,17 @@ class SubscriptionTest extends TestCase
     {
         $user = $this->createCustomer('subscriptions_can_be_created');
 
-        dd(User::find(1));
+        Auth::login($user);
 
         $this->post(
             route('statamic.charge.subscription.store'),
             [
-                'user_id' => 'subscriptions_can_be_created',
                 'subscription' => 'test-subscription',
                 'plan' => static::$planId,
-                'payment_method' => 'pm_visa',
+                'payment_method' => 'pm_card_visa',
             ]
         )->assertOK();
 
         $this->assertTrue($user->subscribed('test-subscription'));
-    }
-
-    /** @test */
-    public function can_call_endpoint()
-    {
-        $response = $this->post(route('statamic.foobar'));
-
-        $response->assertOK();
     }
 }
