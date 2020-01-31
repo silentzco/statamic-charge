@@ -6,6 +6,7 @@ use Stripe\Plan;
 use Stripe\Coupon;
 use Stripe\Product;
 use Illuminate\Support\Str;
+use Laravel\Cashier\Subscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
@@ -108,20 +109,16 @@ class SubscriptionTest extends TestCase
     {
         $routes = Route::getRoutes();
 
-        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.store'));
+        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.create'));
+        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.show'));
     }
 
     /** @test */
     public function redirected_to_login_when_logged_out()
     {
-        $this->post(
-            route('statamic.charge.subscription.store'),
-            [
-                'subscription' => 'test-subscription',
-                'plan' => static::$planId,
-                'payment_method' => 'pm_card_visa',
-            ]
-        )->assertRedirect(route('login'));
+        $this
+            ->post(route('statamic.charge.subscription.store'))
+            ->assertRedirect(route('login'));
     }
 
     /** @test */
@@ -137,6 +134,25 @@ class SubscriptionTest extends TestCase
             'subscription',
             'plan',
             'payment_method',
+        ]);
+    }
+
+    /** @test */
+    public function can_get_subscription()
+    {
+        $user = $this->createCustomer('subscriptions_can_be_created');
+        $subscription = $user->newSubscription('test-cancel-subscription', static::$planId)->create('pm_card_visa');
+
+        Auth::login($user);
+
+        $response = $this->get(route('statamic.charge.subscription.show', ['subscription' => $subscription->id]));
+
+        $response->assertOK();
+
+        $response->assertJson([
+            'id' => $subscription->id,
+            'name' => 'test-cancel-subscription',
+            'stripe_plan' => static::$planId,
         ]);
     }
 
@@ -158,4 +174,24 @@ class SubscriptionTest extends TestCase
 
         $this->assertTrue($user->subscribed('test-subscription'));
     }
+
+    /** @test */
+    // public function can_cancel_simple_subscription()
+    // {
+    //     $user = $this->createCustomer('subscriptions_can_be_canceled');
+    //     $user->newSubscription('test-cancel-subscription', static::$planId)->create('pm_card_visa');
+
+    //     Auth::login($user);
+
+    //     $this->delete(
+    //         route('statamic.charge.subscription.store'),
+    //         [
+    //             'subscription' => 'test-cancel-subscription',
+    //             'plan' => static::$planId,
+    //             'payment_method' => 'pm_card_visa',
+    //         ]
+    //     )->assertOK();
+
+    //     $this->assertTrue($user->subscribed('test-cancel-subscription'));
+    // }
 }
