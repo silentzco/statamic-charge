@@ -6,7 +6,6 @@ use Stripe\Plan;
 use Stripe\Coupon;
 use Stripe\Product;
 use Illuminate\Support\Str;
-use Laravel\Cashier\Subscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
@@ -109,8 +108,9 @@ class SubscriptionTest extends TestCase
     {
         $routes = Route::getRoutes();
 
-        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.create'));
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.show'));
+        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.store'));
+        $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.destroy'));
     }
 
     /** @test */
@@ -170,28 +170,36 @@ class SubscriptionTest extends TestCase
                 'plan' => static::$planId,
                 'payment_method' => 'pm_card_visa',
             ]
-        )->assertOK();
+        )->assertCreated();
 
         $this->assertTrue($user->subscribed('test-subscription'));
     }
 
     /** @test */
-    // public function can_cancel_simple_subscription()
-    // {
-    //     $user = $this->createCustomer('subscriptions_can_be_canceled');
-    //     $user->newSubscription('test-cancel-subscription', static::$planId)->create('pm_card_visa');
+    public function can_cancel_subscription()
+    {
+        $user1 = $this->createCustomer('canceled-at-end-of-period');
+        $user2 = $this->createCustomer('canceled-immediately');
 
-    //     Auth::login($user);
+        $subscription1 = $user1->newSubscription('test-cancel-subscription-at-period-end', static::$planId)->create('pm_card_visa');
+        $subscription2 = $user2->newSubscription('test-cancel-subscription-immediately', static::$planId)->create('pm_card_visa');
 
-    //     $this->delete(
-    //         route('statamic.charge.subscription.store'),
-    //         [
-    //             'subscription' => 'test-cancel-subscription',
-    //             'plan' => static::$planId,
-    //             'payment_method' => 'pm_card_visa',
-    //         ]
-    //     )->assertOK();
+        Auth::login($user1);
+        Auth::login($user2);
 
-    //     $this->assertTrue($user->subscribed('test-cancel-subscription'));
-    // }
+        $response = $this->delete(route('statamic.charge.subscription.destroy', ['subscription' => $subscription1->id]));
+        $response->assertOK();
+
+        $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->onGracePeriod());
+        $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->cancelled());
+
+        $response = $this->delete(
+            route('statamic.charge.subscription.destroy', ['subscription' => $subscription2->id]),
+            ['cancel_immediately' => true]
+        );
+        $response->assertOK();
+
+        $this->assertFalse($user2->subscription('test-cancel-subscription-immediately')->onGracePeriod());
+        $this->assertTrue($user2->subscription('test-cancel-subscription-immediately')->cancelled());
+    }
 }
