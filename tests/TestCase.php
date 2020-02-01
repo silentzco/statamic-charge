@@ -44,6 +44,10 @@ class TestCase extends OrchestraTestCase
         ];
 
         Route::get('/login')->name('login');
+
+        Statamic::pushActionRoutes(function () {
+            return require_once realpath(__DIR__ . '/../routes/actions.php');
+        });
     }
 
     protected function resolveApplicationConfiguration($app)
