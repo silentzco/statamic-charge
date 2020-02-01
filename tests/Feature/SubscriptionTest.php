@@ -141,19 +141,24 @@ class SubscriptionTest extends TestCase
     public function can_get_subscription()
     {
         $user = $this->createCustomer('subscriptions_can_be_created');
-        $subscription = $user->newSubscription('test-cancel-subscription', static::$planId)->create('pm_card_visa');
+        $subscription = $user->newSubscription('test-subscription', static::$planId)->create('pm_card_visa');
 
         Auth::login($user);
 
-        $response = $this->get(route('statamic.charge.subscription.show', ['subscription' => $subscription->id]));
+        $this->get(route('statamic.charge.subscription.show', ['name' => 'test-subscription']))
+            ->assertOK()
+            ->assertJson(
+                [
+                    'id' => $subscription->id,
+                    'name' => 'test-subscription',
+                    'stripe_plan' => static::$planId,
+                ]
+            );
 
-        $response->assertOK();
+        Auth::login($this->createCustomer('no-subscriptions'));
 
-        $response->assertJson([
-            'id' => $subscription->id,
-            'name' => 'test-cancel-subscription',
-            'stripe_plan' => static::$planId,
-        ]);
+        $this->get(route('statamic.charge.subscription.show', ['name' => 'test-subscription']))
+            ->assertForbidden();
     }
 
     /** @test */
@@ -185,16 +190,16 @@ class SubscriptionTest extends TestCase
         $subscription2 = $user2->newSubscription('test-cancel-subscription-immediately', static::$planId)->create('pm_card_visa');
 
         Auth::login($user1);
-        Auth::login($user2);
 
-        $response = $this->delete(route('statamic.charge.subscription.destroy', ['subscription' => $subscription1->id]));
+        $response = $this->delete(route('statamic.charge.subscription.destroy', ['name' => $subscription1->name]));
         $response->assertOK();
 
         $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->onGracePeriod());
         $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->cancelled());
 
+        Auth::login($user2);
         $response = $this->delete(
-            route('statamic.charge.subscription.destroy', ['subscription' => $subscription2->id]),
+            route('statamic.charge.subscription.destroy', ['name' => $subscription2->name]),
             ['cancel_immediately' => true]
         );
         $response->assertOK();

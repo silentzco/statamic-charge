@@ -2,10 +2,10 @@
 
 namespace Silentz\Charge\Http\Controllers;
 
-use Auth;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
 use Statamic\Http\Controllers\Controller;
+use Silentz\Charge\Http\Middleware\HasSubscription;
 use Silentz\Charge\Http\Requests\CreateSubscriptionRequest;
 
 class SubscriptionController extends Controller
@@ -13,18 +13,19 @@ class SubscriptionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware(HasSubscription::class)->except('store');
     }
 
-    public function show(Subscription $subscription)
+    public function show(string $name)
     {
-        return $subscription;
+        return current_user()->subscription($name);
     }
 
     public function store(CreateSubscriptionRequest $request)
     {
         $request->validated();
 
-        return Auth::user()
+        return current_user()
             ->newSubscription($request->subscription, $request->plan)
             ->create($request->payment_method);
     }
@@ -32,9 +33,9 @@ class SubscriptionController extends Controller
     public function destroy(Subscription $subscription, Request $request)
     {
         if ($request->cancel_immediately) {
-            return $subscription->cancelNow();
+            return current_user()->subscription($subscription)->cancelNow();
         }
 
-        return $subscription->cancel();
+        return current_user()->subscription($subscription)->cancel();
     }
 }
