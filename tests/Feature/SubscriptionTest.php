@@ -187,7 +187,7 @@ class SubscriptionTest extends TestCase
         $user2 = $this->createCustomer('canceled-immediately');
 
         $subscription1 = $user1->newSubscription('test-cancel-subscription-at-period-end', static::$planId)->create('pm_card_visa');
-        $subscription2 = $user2->newSubscription('test-cancel-subscription-immediately', static::$planId)->create('pm_card_visa');
+        $subscription2 = $user1->newSubscription('test-cancel-subscription-immediately', static::$planId)->create('pm_card_visa');
 
         Auth::login($user1);
 
@@ -196,15 +196,13 @@ class SubscriptionTest extends TestCase
 
         $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->onGracePeriod());
         $this->assertTrue($user1->subscription('test-cancel-subscription-at-period-end')->cancelled());
+        $this->assertFalse($user1->subscription('test-cancel-subscription-immediately')->onGracePeriod());
 
         Auth::login($user2);
         $response = $this->delete(
             route('statamic.charge.subscription.destroy', ['name' => $subscription2->name]),
             ['cancel_immediately' => true]
         );
-        $response->assertOK();
-
-        $this->assertFalse($user2->subscription('test-cancel-subscription-immediately')->onGracePeriod());
-        $this->assertTrue($user2->subscription('test-cancel-subscription-immediately')->cancelled());
+        $response->assertForbidden();
     }
 }
