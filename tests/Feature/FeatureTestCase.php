@@ -4,8 +4,8 @@ namespace Silentz\Charge\Tests\Feature;
 
 use Stripe\Stripe;
 use Stripe\ApiResource;
+use Silentz\Charge\Models\User;
 use Silentz\Charge\Tests\TestCase;
-use Silentz\Charge\Tests\Fixtures\User;
 use Stripe\Exception\InvalidRequestException;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 

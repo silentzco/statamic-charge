@@ -1,12 +1,11 @@
 <?php
 
-namespace Silentz\Charge\Tests\Fixtures;
+namespace Silentz\Charge\Models;
 
 use Laravel\Cashier\Billable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Model;
 
 class User extends Model
 {
-    use Billable, Notifiable;
+    use Billable;
 }

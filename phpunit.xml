@@ -38,6 +38,6 @@
         <env name="STRIPE_KEY" value="pk_test_i5qm1uvVvWDtEQ0ZKw4jvBsM"/>
         <env name="STRIPE_SECRET" value="sk_test_gQxhpZKdqXQ6BJeqX80oVHZ5"/>
         <env name="STRIPE_WEBHOOK_SECRET" value="whsec_00Zit5rlcd0LCHShefKo2MPB4MmWk92f"/>
-        <env name="CASHIER_MODEL" value="Silentz\Charge\Tests\Fixtures\User" />
+        <env name="CASHIER_MODEL" value="Silentz\Charge\Models\User" />
     </php>
 </phpunit>
