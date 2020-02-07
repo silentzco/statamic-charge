@@ -7,7 +7,11 @@ use Stripe\Coupon;
 use Stripe\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Laravel\Cashier\Events\WebhookHandled;
+use Silentz\Charge\Listeners\HandleWebhook;
+use Silentz\Charge\Events\CustomerSubscriptionUpdated;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
 
 class SubscriptionTest extends TestCase
@@ -111,6 +115,7 @@ class SubscriptionTest extends TestCase
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.show'));
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.store'));
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.subscription.destroy'));
+        $this->assertTrue($routes->hasNamedRoute('statamic.charge.webhook'));
     }
 
     /** @test */
@@ -204,5 +209,43 @@ class SubscriptionTest extends TestCase
             ['cancel_immediately' => true]
         );
         $response->assertForbidden();
+    }
+
+    /** @test */
+    public function does_respond_to_webhook_event()
+    {
+        $this->mock(HandleWebhook::class, function ($mock) {
+            $mock->shouldReceive('handle')->once();
+        });
+
+        WebhookHandled::dispatch([]);
+    }
+
+    /** @test */
+    public function does_emit_events()
+    {
+        Event::fake([CustomerSubscriptionUpdated::class]);
+
+        $payload = [
+            'type' => 'customer.subscription.updated',
+        ];
+
+        WebhookHandled::dispatch($payload);
+
+        Event::assertDispatched(CustomerSubscriptionUpdated::class);
+    }
+
+    /** @test */
+    public function updating_customer_subscription_sends_email()
+    {
+        Event::fake([CustomerSubscriptionUpdated::class]);
+
+        $payload = [
+                'type' => 'customer.subscription.updated',
+            ];
+
+        WebhookHandled::dispatch($payload);
+
+        Event::assertDispatched(CustomerSubscriptionUpdated::class);
     }
 }
