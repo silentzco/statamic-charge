@@ -7,11 +7,15 @@ use Stripe\Coupon;
 use Stripe\Product;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Silentz\Charge\Mail\CustomerDeleted;
+use Silentz\Charge\Mail\CustomerUpdated;
 use Laravel\Cashier\Events\WebhookHandled;
 use Silentz\Charge\Listeners\HandleWebhook;
-use Silentz\Charge\Events\CustomerSubscriptionUpdated;
+use Silentz\Charge\Mail\CustomerSubscriptionDeleted;
+use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
+use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
 
 class SubscriptionTest extends TestCase
@@ -212,7 +216,7 @@ class SubscriptionTest extends TestCase
     }
 
     /** @test */
-    public function does_respond_to_webhook_event()
+    public function does_respond_to_events()
     {
         $this->mock(HandleWebhook::class, function ($mock) {
             $mock->shouldReceive('handle')->once();
@@ -222,30 +226,22 @@ class SubscriptionTest extends TestCase
     }
 
     /** @test */
-    public function does_emit_events()
+    public function events_do_send_email()
     {
-        Event::fake([CustomerSubscriptionUpdated::class]);
+        Mail::fake();
 
-        $payload = [
-            'type' => 'customer.subscription.updated',
+        $types = [
+            'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
+            'customer.subscription.deleted' => CustomerSubscriptionDeleted::class,
+            'customer.updated' => CustomerUpdated::class,
+            'customer.deleted' => CustomerDeleted::class,
+            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
-        WebhookHandled::dispatch($payload);
+        foreach ($types as $type => $class) {
+            WebhookHandled::dispatch(['type' => $type]);
 
-        Event::assertDispatched(CustomerSubscriptionUpdated::class);
-    }
-
-    /** @test */
-    public function updating_customer_subscription_sends_email()
-    {
-        Event::fake([CustomerSubscriptionUpdated::class]);
-
-        $payload = [
-                'type' => 'customer.subscription.updated',
-            ];
-
-        WebhookHandled::dispatch($payload);
-
-        Event::assertDispatched(CustomerSubscriptionUpdated::class);
+            Mail::assertSent($class);
+        }
     }
 }

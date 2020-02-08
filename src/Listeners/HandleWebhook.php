@@ -2,13 +2,18 @@
 
 namespace Silentz\Charge\Listeners;
 
+use Illuminate\Support\Facades\Mail;
 use Laravel\Cashier\Events\WebhookHandled;
-use Silentz\Charge\Events\CustomerSubscriptionUpdated;
+use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
 
 class HandleWebhook
 {
     public function handle(WebhookHandled $event)
     {
-        CustomerSubscriptionUpdated::dispatch();
+        // send email in here, no need for other Events
+
+        // get the right mailable, pass the payload in
+
+        Mail::to('foo@bar.com')->send(new CustomerSubscriptionUpdated($event->payload));
     }
 }
