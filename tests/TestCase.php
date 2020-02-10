@@ -2,10 +2,13 @@
 
 namespace Silentz\Charge\Tests;
 
+use Carbon\Carbon;
 use Statamic\Statamic;
+use Illuminate\Support\Arr;
 use Statamic\Extend\Manifest;
 use Silentz\Charge\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -44,6 +47,18 @@ class TestCase extends OrchestraTestCase
         ];
 
         Route::get('/login')->name('login');
+
+        $data['data']['object'] = [
+            'status' => 'active',
+            'cancel_at_period_end' => true,
+            'current_period_end' => Carbon::now()->addDay()->timestamp,
+        ];
+
+        Arr::set($data, 'data.object.items.data.0.plan.nickname', 'Test Plan');
+
+        Route::get('/csu', function () use ($data) {
+            return new CustomerSubscriptionUpdated($data);
+        });
 
         Statamic::pushActionRoutes(function () {
             return require_once realpath(__DIR__ . '/../routes/actions.php');
