@@ -18,6 +18,15 @@ class ServiceProvider extends AddonServiceProvider
         'actions' => __DIR__ . '/../routes/actions.php',
     ];
 
+    public function boot()
+    {
+        $this->publishes([
+            __DIR__ . '../config/charge.php' => config_path('charge.php'),
+        ]);
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'charge');
+    }
+
     public function register()
     {
         Cashier::ignoreRoutes();
