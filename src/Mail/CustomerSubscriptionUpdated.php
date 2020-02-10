@@ -2,29 +2,22 @@
 
 namespace Silentz\Charge\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
+use Illuminate\Support\Arr;
 
-class CustomerSubscriptionUpdated extends Mailable
+class CustomerSubscriptionUpdated extends SubscriptionMailable
 {
-    use Queueable;
-
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->to($this->user->email)
+            ->view(
+                config('charge.email.subscription.updated_template'),
+                [
+                    'plan' => Arr::get($this->data, 'items.data.0.plan.nickname'),
+                    'status' => Arr::get($this->data, 'status'),
+                    'cancel_at_period_end' => Arr::get($this->data, 'cancel_at_period_end'),
+                    'current_period_end' => Arr::get($this->data, 'current_period_end'),
+                ]
+            );
     }
 }
