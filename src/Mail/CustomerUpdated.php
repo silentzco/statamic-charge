@@ -2,12 +2,15 @@
 
 namespace Silentz\Charge\Mail;
 
-use Silentz\Charge\Mail\BaseMailable as Mailable;
-
-class CustomerUpdated extends Mailable
+class CustomerUpdated extends CustomerMailable
 {
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->to($this->email)
+            ->view(
+                config('charge.email.customer.updated_template'),
+                $this->user->toArray()
+            );
     }
 }

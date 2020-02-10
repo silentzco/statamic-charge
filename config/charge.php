@@ -19,5 +19,9 @@ return [
             'payment_failed_template' => '',
             'payment_failed_subject' => '',
         ],
+        'customer' => [
+            'updated_template' => '',
+            'updated_subject' => '',
+        ],
     ],
 ];

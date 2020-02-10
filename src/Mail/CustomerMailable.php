@@ -3,9 +3,8 @@
 namespace Silentz\Charge\Mail;
 
 use Silentz\Charge\Models\User;
-use Laravel\Cashier\Subscription;
 
-abstract class SubscriptionMailable extends BaseMailable
+abstract class CustomerMailable extends BaseMailable
 {
     /** @var User */
     protected $user;
@@ -14,8 +13,6 @@ abstract class SubscriptionMailable extends BaseMailable
     {
         parent::__construct($payload);
 
-        $this->user = Subscription::where('stripe_id', $this->data['id'])
-            ->first()
-            ->user();
+        $this->user = User::where('stripe_id', $this->data['id'])->first();
     }
 }
