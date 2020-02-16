@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Statamic\Statamic;
 use Illuminate\Support\Arr;
 use Statamic\Extend\Manifest;
+use Silentz\Charge\Models\User;
 use Silentz\Charge\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
@@ -18,6 +19,8 @@ class TestCase extends OrchestraTestCase
         require_once __DIR__ . '/ExceptionHandler.php';
 
         parent::setUp();
+
+//        $this->withFactories(__DIR__ . '/../database/factories');
     }
 
     protected function getPackageProviders($app)
@@ -77,5 +80,14 @@ class TestCase extends OrchestraTestCase
         foreach ($configs as $config) {
             $app['config']->set("statamic.$config", require(__DIR__ . "/../vendor/statamic/cms/config/{$config}.php"));
         }
+    }
+
+    protected function createCustomer($description = 'erin'): User
+    {
+        return User::create([
+            'email' => "{$description}@cashier-test.com",
+            'name' => 'Erin Dalzell',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        ]);
     }
 }
