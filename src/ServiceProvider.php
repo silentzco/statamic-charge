@@ -21,7 +21,9 @@ class ServiceProvider extends AddonServiceProvider
 
     public function boot()
     {
+        parent::boot();
         $this->bootConfig();
+        $this->bootFactories();
         $this->bootPermissions();
         $this->bootViews();
     }
@@ -37,6 +39,11 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__ . '../config/charge.php' => config_path('charge.php'),
         ]);
+    }
+
+    private function bootFactories()
+    {
+        $this->loadFactoriesFrom(__DIR__ . '/../database/factories');
     }
 
     private function bootPermissions()
