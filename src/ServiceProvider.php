@@ -12,16 +12,17 @@ use Statamic\Providers\AddonServiceProvider;
 class ServiceProvider extends AddonServiceProvider
 {
     protected $listen = [
-        WebhookHandled::class => [HandleWebhook::class],
+        WebhookHandled::class => [HandleWebhook::class]
     ];
 
     protected $routes = [
-        'actions' => __DIR__ . '/../routes/actions.php',
+        'actions' => __DIR__ . '/../routes/actions.php'
     ];
 
     public function boot()
     {
         parent::boot();
+
         $this->bootConfig();
         $this->bootFactories();
         $this->bootPermissions();
@@ -37,7 +38,7 @@ class ServiceProvider extends AddonServiceProvider
     private function bootConfig()
     {
         $this->publishes([
-            __DIR__ . '../config/charge.php' => config_path('charge.php'),
+            __DIR__ . '../config/charge.php' => config_path('charge.php')
         ]);
     }
 

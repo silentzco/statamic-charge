@@ -5,9 +5,11 @@ return [
         'from' => '',
         'one-time' => [
             'payment_template' => '',
-            'payment_subject' => '',
+            'payment_subject' => ''
         ],
         'subscription' => [
+            'created_template' => '',
+            'created_subject' => '',
             'updated_template' => '',
             'updated_subject' => '',
             'canceled_template' => '',
@@ -17,11 +19,11 @@ return [
             'payment_succeeded_template' => '',
             'payment_succeeded_subject' => '',
             'payment_failed_template' => '',
-            'payment_failed_subject' => '',
+            'payment_failed_subject' => ''
         ],
         'customer' => [
             'updated_template' => '',
-            'updated_subject' => '',
-        ],
-    ],
+            'updated_subject' => ''
+        ]
+    ]
 ];
