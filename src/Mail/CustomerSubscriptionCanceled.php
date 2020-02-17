@@ -2,15 +2,13 @@
 
 namespace Silentz\Charge\Mail;
 
-use Illuminate\Support\Arr;
-
-class CustomerSubscriptionUpdated extends SubscriptionMailable
+class CustomerSubscriptionCanceled extends SubscriptionMailable
 {
     public function build()
     {
         return $this->to($this->user->email)
-            ->subject(config('charge.email.subscription.updated_subject'))
-            ->view(config('charge.email.subscription.updated_template'), [
+            ->subject(config('charge.email.subscription.canceled_subject'))
+            ->view(config('charge.email.subscription.canceled_template'), [
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
                 'plan' => Arr::get($this->data, 'items.data.0.plan.nickname'),

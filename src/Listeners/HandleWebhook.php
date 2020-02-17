@@ -3,11 +3,11 @@
 namespace Silentz\Charge\Listeners;
 
 use Illuminate\Support\Facades\Mail;
-use Silentz\Charge\Mail\CustomerDeleted;
 use Silentz\Charge\Mail\CustomerUpdated;
 use Laravel\Cashier\Events\WebhookHandled;
-use Silentz\Charge\Mail\CustomerSubscriptionDeleted;
+use Silentz\Charge\Mail\CustomerSubscriptionCreated;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
+use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
 use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 
 class HandleWebhook
@@ -15,11 +15,11 @@ class HandleWebhook
     public function handle(WebhookHandled $event)
     {
         $events = [
+            'customer.subscription.created' => CustomerSubscriptionCreated::class,
             'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
-            'customer.subscription.deleted' => CustomerSubscriptionDeleted::class,
+            'customer.subscription.deleted' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
-            'customer.deleted' => CustomerDeleted::class,
-            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
+            'invoice.payment_action_required' => InvoicePaymentActionRequired::class
         ];
 
         $class = $events[$event->payload['type']];
