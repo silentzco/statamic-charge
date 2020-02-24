@@ -1,49 +1,61 @@
 {
-    "name": "silentz/charge",
-    "type": "statamic-addon",
-    "description": "One-time and subscriptions",
-    "authors": [
-        {
-            "name": "Erin Dalzell",
-            "email": "erin@silentz.co",
-            "homepage": "https://silentz.co",
-            "role": "Founder"
-        }
+  "name": "silentz/charge",
+  "type": "statamic-addon",
+  "description": "One-time and subscriptions",
+  "authors": [
+    {
+      "name": "Erin Dalzell",
+      "email": "erin@silentz.co",
+      "homepage": "https://silentz.co",
+      "role": "Founder"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "src/helpers.php"
     ],
-    "autoload": {
-        "files": [
-            "src/helpers.php"
-        ],
-        "psr-4": {
-            "Silentz\\Charge\\": "src"
-        }
+    "psr-4": {
+      "Silentz\\Charge\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Silentz\\Charge\\Tests\\": "tests"
+    }
+  },
+  "extra": {
+    "statamic": {
+      "name": "Charge",
+      "description": "Charge addon"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Silentz\\Charge\\Tests\\": "tests"
-        }
+    "laravel": {
+      "providers": [
+        "Silentz\\Charge\\ServiceProvider"
+      ]
+    }
+  },
+  "require": {
+    "laravel/cashier": "@dev"
+  },
+  "require-dev": {
+    "statamic/cms": "@dev",
+    "mockery/mockery": "~1.0",
+    "orchestra/testbench": "^4.0",
+    "phpunit/phpunit": "^8.5",
+    "nunomaduro/collision": "^3.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "path",
+      "url": "/Users/erin/Documents/Development/cashier",
+      "symlink": true
     },
-    "extra": {
-        "statamic": {
-            "name": "Charge",
-            "description": "Charge addon"
-        },
-        "laravel": {
-            "providers": [
-                "Silentz\\Charge\\ServiceProvider"
-            ]
-        }
-    },
-    "require": {
-        "laravel/cashier": "^10.0"
-    },
-    "require-dev": {
-        "statamic/cms": "3.0.*@beta",
-        "mockery/mockery": "~1.0",
-        "orchestra/testbench": "^4.0",
-        "phpunit/phpunit": "^8.5",
-        "nunomaduro/collision": "^3.0"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    {
+      "type": "path",
+      "url": "/Users/erin/Downloads/cms",
+      "symlink": true
+    }
+  ]
 }
