@@ -12,4 +12,13 @@ class Subscription extends BaseTag
             'DELETE'
         );
     }
+
+    public function edit()
+    {
+        return $this->createForm(
+            route('statamic.charge.subscription.edit', ['name' => $this->get('name')]),
+            [],
+            'PATCH'
+        );
+    }
 }
