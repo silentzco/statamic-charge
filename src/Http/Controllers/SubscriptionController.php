@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Statamic\Http\Controllers\Controller;
 use Silentz\Charge\Http\Middleware\HasSubscription;
 use Silentz\Charge\Http\Requests\CreateSubscriptionRequest;
+use Silentz\Charge\Http\Requests\UpdateSubscriptionRequest;
 
 class SubscriptionController extends Controller
 {
@@ -30,6 +31,19 @@ class SubscriptionController extends Controller
         return current_user()
             ->newSubscription($request->subscription, $request->plan)
             ->create($request->payment_method);
+    }
+
+    public function update(string $name, UpdateSubscriptionRequest $request): Subscription
+    {
+        $subscription = current_user()->subscription($name);
+
+        $plan = $request->get('plan');
+
+        if ($plan != $subscription->stripe_plan) {
+            $subscription->swap($plan);
+        }
+
+        return $subscription->updateQuantity($request->get('quantity', 1));
     }
 
     public function destroy(string $name, Request $request): RedirectResponse
