@@ -23,7 +23,9 @@ class TagsTest extends FeatureTestCase
 
         $this->user = factory(User::class)->create();
 
-        $this->subscription = factory(Subscription::class)->make(['stripe_status' => 'active']);
+        $this->subscription = factory(Subscription::class)->make([
+            'stripe_status' => 'active'
+        ]);
 
         $this->user->subscriptions()->save($this->subscription);
     }
@@ -31,14 +33,19 @@ class TagsTest extends FeatureTestCase
     /** @test */
     public function can_cancel_subscription()
     {
-        $tag = (new SubscriptionTag)
+        $tag = (new SubscriptionTag())
             ->setParser(Antlers::parser())
             ->setContext([])
             ->setParameters(['name' => $this->subscription->name]);
 
         $html = $tag->cancel();
 
-        $this->assertStringContainsString(route('statamic.charge.subscription.cancel', ['name' => $this->subscription->name]), $html);
+        $this->assertStringContainsString(
+            route('statamic.charge.subscription.cancel', [
+                'name' => $this->subscription->name
+            ]),
+            $html
+        );
         $this->assertStringContainsString('_token', $html);
     }
 }
