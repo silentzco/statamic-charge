@@ -30,6 +30,10 @@ abstract class FeatureTestCase extends TestCase
 
         $this->loadLaravelMigrations();
 
+        // TODO: The migration has been added into the test, but the implementation could be broken if the real
+        // migration is different from what's in here. We should find a way to reference the actual migrations.
+        $this->loadMigrationsFrom(__DIR__ . '/../__migrations__');
+
         $this->artisan('migrate')->run();
     }
 
