@@ -2,6 +2,7 @@
 
 namespace Silentz\Charge;
 
+use Statamic\Facades\Nav;
 use Laravel\Cashier\Cashier;
 use Statamic\Facades\Permission;
 use Laravel\Cashier\Events\WebhookHandled;
@@ -12,11 +13,12 @@ use Statamic\Providers\AddonServiceProvider;
 class ServiceProvider extends AddonServiceProvider
 {
     protected $listen = [
-        WebhookHandled::class => [HandleWebhook::class]
+        WebhookHandled::class => [HandleWebhook::class],
     ];
 
     protected $routes = [
-        'actions' => __DIR__ . '/../routes/actions.php'
+        'actions' => __DIR__.'/../routes/actions.php',
+        'cp' => __DIR__.'/../routes/cp.php',
     ];
 
     public function boot()
@@ -25,6 +27,7 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->bootConfig();
         $this->bootFactories();
+        $this->bootNav();
         $this->bootPermissions();
         $this->bootViews();
     }
@@ -38,24 +41,34 @@ class ServiceProvider extends AddonServiceProvider
     private function bootConfig()
     {
         $this->publishes([
-            __DIR__ . '../config/charge.php' => config_path('charge.php')
+            __DIR__.'../config/charge.php' => config_path('charge.php'),
         ]);
     }
 
     private function bootFactories()
     {
-        $this->loadFactoriesFrom(__DIR__ . '/../database/factories');
+        $this->loadFactoriesFrom(__DIR__.'/../database/factories');
+    }
+
+    private function bootNav()
+    {
+        Nav::extend(function ($nav) {
+            $nav->tools('Charge')
+                ->route('charge.cp.subscriptions')
+                ->can('access charge')
+                ->icon('shield-key');
+        });
     }
 
     private function bootPermissions()
     {
         $this->app->booted(function () {
-            Permission::register('charge')->label('Manage Charges & Subscriptions');
+            Permission::register('access charge')->label('Manage Charges & Subscriptions');
         });
     }
 
     private function bootViews()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'charge');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'charge');
     }
 }
