@@ -5,6 +5,8 @@ namespace Silentz\Charge;
 use Statamic\Facades\Nav;
 use Laravel\Cashier\Cashier;
 use Statamic\Facades\Permission;
+use Silentz\Charge\Tags\Subscription;
+use Silentz\Charge\Tags\Subscriptions;
 use Laravel\Cashier\Events\WebhookHandled;
 use Laravel\Cashier\CashierServiceProvider;
 use Silentz\Charge\Listeners\HandleWebhook;
@@ -19,6 +21,11 @@ class ServiceProvider extends AddonServiceProvider
     protected $routes = [
         'actions' => __DIR__.'/../routes/actions.php',
         'cp' => __DIR__.'/../routes/cp.php',
+    ];
+
+    protected $tags = [
+        Subscription::class,
+        Subscriptions::class,
     ];
 
     public function boot()
