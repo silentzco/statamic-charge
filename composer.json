@@ -45,17 +45,5 @@
     "nunomaduro/collision": "^3.0"
   },
   "minimum-stability": "dev",
-  "prefer-stable": true,
-  "repositories": [
-    {
-      "type": "path",
-      "url": "/Users/erin/Documents/Development/cashier",
-      "symlink": true
-    },
-    {
-      "type": "path",
-      "url": "/Users/erin/Downloads/cms",
-      "symlink": true
-    }
-  ]
+  "prefer-stable": true
 }
