@@ -1,6 +1,6 @@
 <?php
 
-namespace Silentz\Charge\Http\Controllers;
+namespace Silentz\Charge\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class OneTimeController
         $request->validate([
             'amount' => 'required',
             'currency' => 'required',
-            'source' => 'required'
+            'source' => 'required',
         ]);
 
         return 'ok';

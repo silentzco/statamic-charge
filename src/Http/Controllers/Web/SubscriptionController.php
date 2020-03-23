@@ -1,8 +1,7 @@
 <?php
 
-namespace Silentz\Charge\Http\Controllers;
+namespace Silentz\Charge\Http\Controllers\Web;
 
-use Redirect;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
 use Illuminate\Http\RedirectResponse;
@@ -19,9 +18,9 @@ class SubscriptionController extends Controller
         $this->middleware(HasSubscription::class)->except('store');
     }
 
-    public function show(string $name): ?Subscription
+    public function show(Subscription $subscription): ?Subscription
     {
-        return current_user()->subscription($name);
+        return $subscription;
     }
 
     public function store(CreateSubscriptionRequest $request): Subscription
@@ -29,14 +28,12 @@ class SubscriptionController extends Controller
         $request->validated();
 
         return current_user()
-            ->newSubscription($request->subscription, $request->plan)
+            ->newSubscription($request->name, $request->plan)
             ->create($request->payment_method);
     }
 
-    public function update(string $name, UpdateSubscriptionRequest $request): Subscription
+    public function update(Subscription $subscription, UpdateSubscriptionRequest $request): Subscription
     {
-        $subscription = current_user()->subscription($name);
-
         $plan = $request->get('plan');
 
         if ($plan != $subscription->stripe_plan) {
@@ -46,10 +43,8 @@ class SubscriptionController extends Controller
         return $subscription->updateQuantity($request->get('quantity', 1));
     }
 
-    public function destroy(string $name, Request $request): RedirectResponse
+    public function destroy(Subscription $subscription, Request $request): RedirectResponse
     {
-        $subscription = current_user()->subscription($name);
-
         $subscription = $request->cancel_immediately ? $subscription->cancelNow() : $subscription->cancel();
 
         return $request->redirect ? redirect($request->redirect) : back();
