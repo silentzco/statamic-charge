@@ -4,9 +4,12 @@ namespace Silentz\Charge\Tags;
 
 use Statamic\Tags\Tags;
 use Illuminate\Support\Facades\Crypt;
+use Statamic\Tags\Concerns\RendersForms;
 
 abstract class BaseTag extends Tags
 {
+    use RendersForms;
+
     protected function createForm(string $action, array $data = [], string $method = 'POST'): string
     {
         $html = $this->formOpen($action, $method);
@@ -26,7 +29,7 @@ abstract class BaseTag extends Tags
         }
 
         if ($redirect = $this->get('redirect')) {
-            $html .= '<input type="hidden" name="redirect" value="' . $redirect . '" />';
+            $html .= '<input type="hidden" name="redirect" value="'.$redirect.'" />';
         }
 
         $params = [];
@@ -42,32 +45,32 @@ abstract class BaseTag extends Tags
             $params['action_needed_redirect'] = $action_needed_redirect;
         }
 
-        $html .= '<input type="hidden" name="_params" value="' . Crypt::encrypt($params) . '" />';
+        $html .= '<input type="hidden" name="_params" value="'.Crypt::encrypt($params).'" />';
 
-        return $html . $this->parse($data) . '</form>';
+        return $html.$this->parse($data).$this->formClose();
     }
 
     /**
-     * Maps to {{ charge:success }}
+     * Maps to {{ charge:success }}.
      *
      **/
     public function success(): bool
     {
-        return session()->has('success');
+        return session()->has('charge.success');
     }
 
     public function requiresAction(): bool
     {
-        return session()->has('requires_action');
+        return session()->has('charge.requires_action');
     }
 
     /**
-     * Maps to {{ charge:details }}
+     * Maps to {{ charge:details }}.
      *
      **/
     public function details(): ?array
     {
-        return $this->success() ? session('details') : [];
+        return $this->success() ? session('charege.details') : [];
     }
 
     /**
@@ -75,7 +78,7 @@ abstract class BaseTag extends Tags
      */
     public function errors()
     {
-        if (!$this->hasErrors()) {
+        if (! $this->hasErrors()) {
             return false;
         }
 
@@ -86,13 +89,12 @@ abstract class BaseTag extends Tags
         }
 
         return ($this->content === '')    // If this is a single tag...
-            ? !empty($errors)             // just output a boolean.
+            ? ! empty($errors)             // just output a boolean.
             : $this->parseLoop($errors);  // Otherwise, parse the content loop.
     }
 
     /**
      * Does this form have errors?
-     *
      */
     private function hasErrors(): bool
     {
@@ -102,7 +104,7 @@ abstract class BaseTag extends Tags
     }
 
     /**
-     * Get the errorBag from session
+     * Get the errorBag from session.
      *
      * @return object
      */
