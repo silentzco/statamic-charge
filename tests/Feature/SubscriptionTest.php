@@ -8,7 +8,6 @@ use Stripe\Product;
 use Statamic\Auth\User;
 use Statamic\Facades\Role;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -54,19 +53,19 @@ class SubscriptionTest extends TestCase
         parent::setUpBeforeClass();
 
         static::$productId =
-            static::$stripePrefix . 'product-1' . Str::random(10);
+            static::$stripePrefix.'product-1'.Str::random(10);
         static::$planId =
-            static::$stripePrefix . 'monthly-10-' . Str::random(10);
+            static::$stripePrefix.'monthly-10-'.Str::random(10);
         static::$otherPlanId =
-            static::$stripePrefix . 'monthly-10-' . Str::random(10);
+            static::$stripePrefix.'monthly-10-'.Str::random(10);
         static::$premiumPlanId =
-            static::$stripePrefix . 'monthly-20-premium-' . Str::random(10);
-        static::$couponId = static::$stripePrefix . 'coupon-' . Str::random(10);
+            static::$stripePrefix.'monthly-20-premium-'.Str::random(10);
+        static::$couponId = static::$stripePrefix.'coupon-'.Str::random(10);
 
         Product::create([
             'id' => static::$productId,
             'name' => 'Laravel Cashier Test Product',
-            'type' => 'service'
+            'type' => 'service',
         ]);
 
         Plan::create([
@@ -76,7 +75,7 @@ class SubscriptionTest extends TestCase
             'interval' => 'month',
             'billing_scheme' => 'per_unit',
             'amount' => 1000,
-            'product' => static::$productId
+            'product' => static::$productId,
         ]);
 
         Plan::create([
@@ -86,7 +85,7 @@ class SubscriptionTest extends TestCase
             'interval' => 'month',
             'billing_scheme' => 'per_unit',
             'amount' => 1000,
-            'product' => static::$productId
+            'product' => static::$productId,
         ]);
 
         Plan::create([
@@ -96,7 +95,7 @@ class SubscriptionTest extends TestCase
             'interval' => 'month',
             'billing_scheme' => 'per_unit',
             'amount' => 2000,
-            'product' => static::$productId
+            'product' => static::$productId,
         ]);
 
         Coupon::create([
@@ -104,7 +103,7 @@ class SubscriptionTest extends TestCase
             'duration' => 'repeating',
             'amount_off' => 500,
             'duration_in_months' => 3,
-            'currency' => 'USD'
+            'currency' => 'USD',
         ]);
 
         //Role::make('foo');
@@ -127,14 +126,22 @@ class SubscriptionTest extends TestCase
         $routes = Route::getRoutes();
 
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.get')
+            $routes->hasNamedRoute('statamic.charge.subscription.index')
         );
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.create')
+            $routes->hasNamedRoute('statamic.charge.subscription.store')
         );
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.cancel')
+            $routes->hasNamedRoute('statamic.charge.subscription.show')
         );
+        $this->assertTrue(
+            $routes->hasNamedRoute('statamic.charge.subscription.update')
+        );
+
+        $this->assertTrue(
+            $routes->hasNamedRoute('statamic.charge.subscription.destroy')
+        );
+
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.webhook'));
     }
 
@@ -142,7 +149,7 @@ class SubscriptionTest extends TestCase
     public function redirected_to_login_when_logged_out()
     {
         $this->post(
-            route('statamic.charge.subscription.create')
+            route('statamic.charge.subscription.store')
         )->assertRedirect(route('login'));
     }
 
@@ -151,17 +158,15 @@ class SubscriptionTest extends TestCase
     {
         $user = $this->createCustomer('subscriptions_can_be_created');
 
-        Auth::login($user);
-
-        $response = $this->post(
-            route('statamic.charge.subscription.create'),
+        $response = $this->actingAs($user)->post(
+            route('statamic.charge.subscription.store'),
             []
         );
 
         $response->assertSessionHasErrors([
             'subscription',
             'plan',
-            'payment_method'
+            'payment_method',
         ]);
     }
 
@@ -173,27 +178,23 @@ class SubscriptionTest extends TestCase
             ->newSubscription('test-subscription', static::$planId)
             ->create('pm_card_visa');
 
-        Auth::login($user);
-
-        $this->get(
-            route('statamic.charge.subscription.get', [
-                'name' => 'test-subscription'
-            ])
-        )
+        $this
+            ->actingAs($user)
+            ->get(route('statamic.charge.subscription.show', [
+                'subscription' => $subscription->id,
+            ]))
             ->assertOK()
             ->assertJson([
                 'id' => $subscription->id,
                 'name' => 'test-subscription',
-                'stripe_plan' => static::$planId
+                'stripe_plan' => static::$planId,
             ]);
 
-        Auth::login($this->createCustomer('no-subscriptions'));
-
-        $this->get(
-            route('statamic.charge.subscription.get', [
-                'name' => 'test-subscription'
-            ])
-        )->assertForbidden();
+        $this
+            ->actingAs($this->createCustomer('no-subscriptions'))
+            ->get(route('statamic.charge.subscription.show', [
+                'name' => $subscription->id,
+            ]))->assertForbidden();
     }
 
     /** @test */
@@ -201,12 +202,10 @@ class SubscriptionTest extends TestCase
     {
         $user = $this->createCustomer('subscriptions_can_be_created');
 
-        Auth::login($user);
-
-        $this->post(route('statamic.charge.subscription.create'), [
-            'subscription' => 'test-subscription',
+        $this->actingAs($user)->post(route('statamic.charge.subscription.store'), [
+            'name' => 'test-subscription',
             'plan' => static::$planId,
-            'payment_method' => 'pm_card_visa'
+            'payment_method' => 'pm_card_visa',
         ])->assertCreated();
 
         $this->assertTrue($user->subscribed('test-subscription'));
@@ -231,11 +230,9 @@ class SubscriptionTest extends TestCase
             )
             ->create('pm_card_visa');
 
-        Auth::login($user1);
-
-        $response = $this->delete(
+        $response = $this->actingAs($user1)->delete(
             route('statamic.charge.subscription.cancel', [
-                'name' => $subscription1->name
+                'subscription' => $subscription1->id,
             ])
         );
         $response->assertOK();
@@ -256,11 +253,8 @@ class SubscriptionTest extends TestCase
                 ->onGracePeriod()
         );
 
-        Auth::login($user2);
-        $response = $this->delete(
-            route('statamic.charge.subscription.cancel', [
-                'name' => $subscription2->name
-            ]),
+        $response = $this->actingAs($user2)->delete(
+            route('statamic.charge.subscription.cancel', ['subscription' => $subscription2->id]),
             ['cancel_immediately' => true]
         );
         $response->assertForbidden();
@@ -275,13 +269,11 @@ class SubscriptionTest extends TestCase
             ->newSubscription('edit-subscription', static::$planId)
             ->create('pm_card_visa');
 
-        Auth::login($user);
-
-        $response = $this->patch(
-            route('statamic.charge.subscription.update', ['name' => $subscription->name]),
+        $response = $this->actingAs($user)->patch(
+            route('statamic.charge.subscription.update', ['subscription' => $subscription->id]),
             [
                 'plan' => static::$premiumPlanId,
-                'quantity' => 3
+                'quantity' => 3,
             ]
         );
         $response->assertOK();
@@ -315,15 +307,16 @@ class SubscriptionTest extends TestCase
 
         $response = $this->actingAs($user)->delete(
             route('statamic.charge.subscription.cancel', [
-                'name' => $subscription->name
+                'subscription' => $subscription->id,
             ]),
             [
-                'redirect' => '/cancel/success'
+                'redirect' => '/cancel/success',
             ]
         );
 
         $response->assertRedirect('/cancel/success');
     }
+
     /** @test */
     public function does_respond_to_events()
     {
@@ -340,15 +333,11 @@ class SubscriptionTest extends TestCase
         Mail::fake();
 
         $types = [
-            'customer.subscription.created' =>
-            CustomerSubscriptionCreated::class,
-            'customer.subscription.updated' =>
-            CustomerSubscriptionUpdated::class,
-            'customer.subscription.canceled' =>
-            CustomerSubscriptionCanceled::class,
+            'customer.subscription.created' => CustomerSubscriptionCreated::class,
+            'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
+            'customer.subscription.canceled' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
-            'invoice.payment_action_required' =>
-            InvoicePaymentActionRequired::class
+            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
         foreach ($types as $type => $class) {
@@ -371,7 +360,7 @@ class SubscriptionTest extends TestCase
         dd(Role::all());
 
         $response = $this->postJson(route('statamic.charge.webhook'), [
-            'type' => 'customer.subscription.created'
+            'type' => 'customer.subscription.created',
         ])->assertOk();
 
         /** @var User */
