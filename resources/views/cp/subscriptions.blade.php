@@ -29,7 +29,7 @@
                                 <dropdown-item
                                     class="warning"
                                     text="Cancel"
-                                    redirect="{{ cp_route('charge.cp.subscription.cancel', ['name' => $subscription->name]) }}"
+                                    redirect="{{ cp_route('charge.subscription.destroy', ['subscription' => $subscription->id]) }}"
                                 ></dropdown-item>
                             </dropdown-list>
                         </td>
