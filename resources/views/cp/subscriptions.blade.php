@@ -25,13 +25,8 @@
                         <td>{{ $subscription->stripe_status }}</td>
                         <td>{{ $subscription->ends_at }}</td>
                         <td>
-                            <dropdown-list>
-                                <dropdown-item
-                                    class="warning"
-                                    text="Cancel"
-                                    redirect="{{ cp_route('charge.subscription.destroy', ['subscription' => $subscription->id]) }}"
-                                ></dropdown-item>
-                            </dropdown-list>
+                            <subscription-actions route="{{ cp_route('charge.subscription.destroy', ['subscription' => $subscription->id]) }}">
+                            </subscription-actions>
                         </td>
                     </tr>
                 @endforeach
