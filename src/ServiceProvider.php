@@ -2,8 +2,8 @@
 
 namespace Silentz\Charge;
 
-use Statamic\Facades\Nav;
 use Laravel\Cashier\Cashier;
+use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
 use Silentz\Charge\Tags\Subscription;
 use Silentz\Charge\Tags\Subscriptions;
@@ -21,6 +21,10 @@ class ServiceProvider extends AddonServiceProvider
     protected $routes = [
         'actions' => __DIR__.'/../routes/actions.php',
         'cp' => __DIR__.'/../routes/cp.php',
+    ];
+
+    protected $scripts = [
+        __DIR__.'/../dist/js/cp.js',
     ];
 
     protected $tags = [
@@ -48,7 +52,7 @@ class ServiceProvider extends AddonServiceProvider
     private function bootConfig()
     {
         $this->publishes([
-            __DIR__.'../config/charge.php' => config_path('charge.php'),
+            __DIR__.'/../config/charge.php' => config_path('charge.php'),
         ]);
     }
 
