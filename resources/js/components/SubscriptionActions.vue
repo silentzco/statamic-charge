@@ -41,8 +41,6 @@
                     .delete(this.route)
                     .then(response => {
                         location.reload();
-
-                        this.$toast.success(__("Canceled"));
                     })
                     .catch(() => {
                         this.$toast.error(__("Something went wrong"));
