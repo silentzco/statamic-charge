@@ -35,7 +35,7 @@
     }
   },
   "require": {
-    "laravel/cashier": "^10.7"
+    "laravel/cashier": "^11.0"
   },
   "require-dev": {
     "statamic/cms": "3.0.*@beta",
