@@ -1,6 +1,6 @@
 @extends('statamic::layout')
 
-@section('title', 'Charge')
+@section('title', 'Subscriptions')
 
 @section('content')
     <div class="flex items-center justify-between mb-3">

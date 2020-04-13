@@ -65,9 +65,17 @@ class ServiceProvider extends AddonServiceProvider
     {
         Nav::extend(function ($nav) {
             $nav->tools('Charge')
-                ->route('charge.subscription.index')
+                ->route('charge.index')
                 ->can('access charge')
-                ->icon('shield-key');
+                ->icon('shield-key')
+                ->children([
+                    $nav
+                        ->item('Customers')
+                        ->route('charge.customer.index'),
+                    $nav
+                        ->item('Subscriptions')
+                        ->route('charge.subscription.index'),
+                ]);
         });
     }
 
