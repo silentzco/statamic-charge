@@ -2,8 +2,8 @@
 
 namespace Silentz\Charge\Http\Controllers\Cp;
 
+use Illuminate\Http\Response;
 use Laravel\Cashier\Subscription;
-use Illuminate\Http\RedirectResponse;
 use Statamic\Http\Controllers\CP\CpController;
 
 class SubscriptionController extends CpController
@@ -13,10 +13,12 @@ class SubscriptionController extends CpController
         return view('charge::cp.subscriptions', ['subscriptions' => Subscription::with('user')->get()]);
     }
 
-    public function destroy(Subscription $subscription): RedirectResponse
+    public function destroy(Subscription $subscription): Response
     {
-        $subscription->cancel();
+//        $subscription->cancel();
 
-        return back()->with('success', 'Subscription has been canceled.');
+        session()->flash('success', 'Subscription Canceled');
+
+        return response('Success');
     }
 }

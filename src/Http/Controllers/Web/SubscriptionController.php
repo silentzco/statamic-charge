@@ -14,7 +14,6 @@ class SubscriptionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
         $this->middleware(HasSubscription::class)->except('store');
     }
 
