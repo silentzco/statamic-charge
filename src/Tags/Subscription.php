@@ -6,17 +6,15 @@ class Subscription extends BaseTag
 {
     public function create()
     {
-        return $this->createForm(
-            route('statamic.charge.subscription.create'),
-            [],
-            'PATCH'
-        );
+        dd($this->content);
+
+        return $this->createForm(route('statamic.charge.subscription.store'));
     }
 
     public function cancel()
     {
         return $this->createForm(
-            route('statamic.charge.subscription.cancel', ['name' => $this->get('name')]),
+            route('statamic.charge.subscription.destroy', ['subscription' => $this->get('id')]),
             [],
             'DELETE'
         );
