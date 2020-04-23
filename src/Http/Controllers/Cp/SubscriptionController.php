@@ -15,7 +15,7 @@ class SubscriptionController extends CpController
 
     public function destroy(Subscription $subscription): Response
     {
-//        $subscription->cancel();
+        $subscription->cancel();
 
         session()->flash('success', 'Subscription Canceled');
 
