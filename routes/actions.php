@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Http\Controllers\WebhookController;
+use Silentz\Charge\Http\Controllers\Web\CustomerController;
 use Silentz\Charge\Http\Controllers\Web\SubscriptionController;
 
 Route::name('charge.')->group(function () {
@@ -12,6 +13,11 @@ Route::name('charge.')->group(function () {
             Route::post('subscription', [SubscriptionController::class, 'store'])->name('store');
             Route::patch('subscription/{subscription}', [SubscriptionController::class, 'update'])->name('update');
             Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::name('customer.')->group(function () {
+            Route::get('customer', [CustomerController::class, 'show'])->name('show');
+            Route::patch('customer', [CustomerController::class, 'update'])->name('update');
         });
     });
 });
