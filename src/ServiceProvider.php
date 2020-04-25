@@ -40,7 +40,6 @@ class ServiceProvider extends AddonServiceProvider
         $this->bootFactories();
         $this->bootNav();
         $this->bootPermissions();
-        $this->bootViews();
     }
 
     public function register()
@@ -65,17 +64,9 @@ class ServiceProvider extends AddonServiceProvider
     {
         Nav::extend(function ($nav) {
             $nav->tools('Charge')
-                ->route('charge.index')
+                ->route('charge.cp.subscriptions')
                 ->can('access charge')
-                ->icon('shield-key')
-                ->children([
-                    $nav
-                        ->item('Customers')
-                        ->route('charge.customer.index'),
-                    $nav
-                        ->item('Subscriptions')
-                        ->route('charge.subscription.index'),
-                ]);
+                ->icon('shield-key');
         });
     }
 
@@ -84,10 +75,5 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->booted(function () {
             Permission::register('access charge')->label('Manage Charges & Subscriptions');
         });
-    }
-
-    private function bootViews()
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'charge');
     }
 }
