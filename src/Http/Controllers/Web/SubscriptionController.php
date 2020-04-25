@@ -68,7 +68,7 @@ class SubscriptionController extends Controller
 
         return $response->with([
           'success' => true,
-          'subscription' = $subscription->toArray()
+          'subscription' => $subscription->toArray(),
         ]);
     }
 
@@ -78,7 +78,7 @@ class SubscriptionController extends Controller
             'type' => $error->type,
             'code' => $error->code,
             'param' => $error->param,
-            'message' => $error->message
+            'message' => $error->message,
         ], $bag);
     }
 }
