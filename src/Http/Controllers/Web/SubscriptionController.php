@@ -2,36 +2,34 @@
 
 namespace Silentz\Charge\Http\Controllers\Web;
 
-use Stripe\ErrorObject;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
-use Illuminate\Http\RedirectResponse;
-use Stripe\Exception\ApiErrorException;
-use Statamic\Http\Controllers\Controller;
-use Silentz\Charge\Http\Requests\CancelSubscriptionRequest;
 use Silentz\Charge\Http\Requests\CreateSubscriptionRequest;
+use Silentz\Charge\Http\Requests\SubscriptionRequest;
 use Silentz\Charge\Http\Requests\UpdateSubscriptionRequest;
+use Statamic\Http\Controllers\Controller;
+use Stripe\ErrorObject;
+use Stripe\Exception\ApiErrorException;
 
 class SubscriptionController extends Controller
 {
     public function store(CreateSubscriptionRequest $request): RedirectResponse
     {
-        $request->validated();
-
         try {
-            $subscription = current_user()
-              ->newSubscription($request->name, $request->plan)
-              ->create($request->payment_method);
+            $subscription = $request->user()
+                ->newSubscription($request->name, $request->plan)
+                ->create($request->payment_method);
 
             return $this->withSuccess($subscription, $request);
         } catch (ApiErrorException $e) {
-            return $this->withErrors($e->getError(), 'create');
+            return $this->withErrors($e->getError(), $request);
         }
     }
 
-    public function update(Subscription $subscription, UpdateSubscriptionRequest $request): RedirectResponse
+    public function update(UpdateSubscriptionRequest $request): RedirectResponse
     {
-        $request->validated();
+        $subscription = $request->user()->subscription($request->name);
 
         $plan = $request->get('plan');
 
@@ -45,18 +43,20 @@ class SubscriptionController extends Controller
                     $request
             );
         } catch (ApiErrorException $e) {
-            return $this->withErrors($e->getError(), 'update');
+            return $this->withErrors($e->getError(), $request);
         }
     }
 
-    public function destroy(Subscription $subscription, CancelSubscriptionRequest $request): RedirectResponse
+    public function destroy(SubscriptionRequest $request): RedirectResponse
     {
         try {
+            $subscription = $request->user()->subscription($request->name);
+
             $subscription = $request->cancel_immediately ? $subscription->cancelNow() : $subscription->cancel();
 
             return $this->withSuccess($subscription, $request);
         } catch (ApiErrorException $e) {
-            return $this->withErrors($e->getError(), 'cancel');
+            return $this->withErrors($e->getError(), $request);
         }
     }
 
@@ -72,13 +72,12 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    private function withErrors(ErrorObject $error, string $bag): RedirectResponse
+    private function withErrors(ErrorObject $error, Request $request): RedirectResponse
     {
-        return back()->withErrors([
-            'type' => $error->type,
-            'code' => $error->code,
-            'param' => $error->param,
-            'message' => $error->message,
-        ], $bag);
+        $redirect = $request->input('error_redirect', false);
+
+        $response = $redirect ? redirect($redirect) : back();
+
+        return $response->withErrors($error->message, 'charge');
     }
 }
