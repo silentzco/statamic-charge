@@ -6,10 +6,13 @@ use Stripe\Stripe;
 use Stripe\ApiResource;
 use Silentz\Charge\Tests\TestCase;
 use Stripe\Exception\InvalidRequestException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 abstract class FeatureTestCase extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @var string
      */
@@ -28,13 +31,8 @@ abstract class FeatureTestCase extends TestCase
 
         Eloquent::unguard();
 
-        $this->loadLaravelMigrations();
-
-        // TODO: The migration has been added into the test, but the implementation could be broken if the real
-        // migration is different from what's in here. We should find a way to reference the actual migrations.
-        $this->loadMigrationsFrom(__DIR__ . '/../__migrations__');
-
-        $this->artisan('migrate')->run();
+        $this->loadMigrationsFrom(__DIR__.'/../__migrations__');
+        // $this->loadMigrationsFrom(__DIR__.'../../../../laravel/cashier/database/migrations');
     }
 
     protected static function deleteStripeResource(ApiResource $resource)

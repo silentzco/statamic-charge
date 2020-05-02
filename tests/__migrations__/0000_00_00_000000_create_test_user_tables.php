@@ -13,15 +13,15 @@ class CreateTestUserTables extends Migration
      */
     public function up()
     {
-//         Schema::create('users', function (Blueprint $table) {
-//             $table->increments('id');
-//             $table->string('name');
-//             $table->string('email')->unique();
-//             $table->string('password')->nullable(); // Only nullable for tests so we can test passwords get encrypted.
-//             $table->boolean('super')->default(false);
-//             $table->rememberToken();
-//             $table->timestamps();
-//         });
+        Schema::create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password')->nullable(); // Only nullable for tests so we can test passwords get encrypted.
+            $table->boolean('super')->default(false);
+            $table->rememberToken();
+            $table->timestamps();
+        });
 
         Schema::create('role_user', function (Blueprint $table) {
             $table->increments('id');

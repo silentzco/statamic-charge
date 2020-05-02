@@ -3,20 +3,21 @@
 namespace Silentz\Charge\Tests;
 
 use Carbon\Carbon;
-use Statamic\Statamic;
 use Illuminate\Support\Arr;
-use Statamic\Extend\Manifest;
+use Illuminate\Support\Facades\Route;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
 use Silentz\Charge\Models\User;
 use Silentz\Charge\ServiceProvider;
-use Illuminate\Support\Facades\Route;
-use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Statamic\Extend\Manifest;
+use Statamic\Providers\StatamicServiceProvider;
+use Statamic\Statamic;
 
 class TestCase extends OrchestraTestCase
 {
     protected function setUp(): void
     {
-        require_once __DIR__ . '/ExceptionHandler.php';
+        require_once __DIR__.'/ExceptionHandler.php';
 
         parent::setUp();
 
@@ -25,13 +26,13 @@ class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app)
     {
-        return [\Statamic\Providers\StatamicServiceProvider::class, ServiceProvider::class];
+        return [StatamicServiceProvider::class, ServiceProvider::class];
     }
 
     protected function getPackageAliases($app)
     {
         return [
-            'Statamic' => Statamic::class
+            'Statamic' => Statamic::class,
         ];
     }
 
@@ -42,8 +43,8 @@ class TestCase extends OrchestraTestCase
         $app->make(Manifest::class)->manifest = [
             'silentz/charge' => [
                 'id' => 'silentz/charge',
-                'namespace' => 'Silentz\\Charge\\'
-            ]
+                'namespace' => 'Silentz\\Charge\\',
+            ],
         ];
 
         Route::get('/login')->name('login');
@@ -51,7 +52,7 @@ class TestCase extends OrchestraTestCase
         $data['data']['object'] = [
             'status' => 'active',
             'cancel_at_period_end' => true,
-            'current_period_end' => Carbon::now()->addDay()->timestamp
+            'current_period_end' => Carbon::now()->addDay()->timestamp,
         ];
 
         Arr::set($data, 'data.object.items.data.0.plan.nickname', 'Test Plan');
@@ -63,7 +64,7 @@ class TestCase extends OrchestraTestCase
         config(['statamic.users.repository' => 'eloquent']);
 
         Statamic::pushActionRoutes(function () {
-            return require_once realpath(__DIR__ . '/../routes/actions.php');
+            return require_once realpath(__DIR__.'/../routes/actions.php');
         });
     }
 
@@ -74,7 +75,7 @@ class TestCase extends OrchestraTestCase
         $configs = ['assets', 'cp', 'forms', 'routes', 'static_caching', 'sites', 'stache', 'system', 'users'];
 
         foreach ($configs as $config) {
-            $app['config']->set("statamic.$config", require __DIR__ . "/../vendor/statamic/cms/config/{$config}.php");
+            $app['config']->set("statamic.$config", require __DIR__."/../vendor/statamic/cms/config/{$config}.php");
         }
     }
 
@@ -83,7 +84,7 @@ class TestCase extends OrchestraTestCase
         return User::create([
             'email' => "{$description}@cashier-test.com",
             'name' => 'Erin Dalzell',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
         ]);
     }
 }

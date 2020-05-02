@@ -45,6 +45,7 @@ class ServiceProvider extends AddonServiceProvider
     public function register()
     {
         Cashier::ignoreRoutes();
+        Cashier::ignoreMigrations();
         $this->app->register(CashierServiceProvider::class);
     }
 
