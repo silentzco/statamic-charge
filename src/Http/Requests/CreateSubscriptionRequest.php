@@ -2,9 +2,7 @@
 
 namespace Silentz\Charge\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class CreateSubscriptionRequest extends FormRequest
+class CreateSubscriptionRequest extends ChargeRequest
 {
     public function rules()
     {

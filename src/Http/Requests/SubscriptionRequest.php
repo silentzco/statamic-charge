@@ -2,12 +2,16 @@
 
 namespace Silentz\Charge\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class SubscriptionRequest extends FormRequest
+class SubscriptionRequest extends ChargeRequest
 {
     public function authorize()
     {
-        return $this->user()->subscription($this->name);
+        return $this->user()->subscribed($this->name);
+    }
+
+    public function rules()
+    {
+        return [
+        ];
     }
 }
