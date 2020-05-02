@@ -42,7 +42,8 @@
     "mockery/mockery": "~1.0",
     "orchestra/testbench": "^4.0",
     "phpunit/phpunit": "^8.5",
-    "nunomaduro/collision": "^3.0"
+    "nunomaduro/collision": "^3.0",
+    "jasonmccreary/laravel-test-assertions": "^1.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true
