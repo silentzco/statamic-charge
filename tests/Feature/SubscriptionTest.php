@@ -2,24 +2,24 @@
 
 namespace Silentz\Charge\Tests\Feature;
 
-use Stripe\Plan;
-use Stripe\Coupon;
-use Stripe\Product;
-use Statamic\Auth\User;
-use Statamic\Facades\Role;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use Statamic\Facades\User as UserAPI;
-use Silentz\Charge\Mail\CustomerUpdated;
+use Illuminate\Support\Str;
 use Laravel\Cashier\Events\WebhookHandled;
 use Silentz\Charge\Listeners\HandleWebhook;
+use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
 use Silentz\Charge\Mail\CustomerSubscriptionCreated;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
-use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
+use Silentz\Charge\Mail\CustomerUpdated;
 use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
+use Statamic\Auth\User;
+use Statamic\Facades\Role;
+use Statamic\Facades\User as UserAPI;
+use Stripe\Coupon;
+use Stripe\Plan;
+use Stripe\Product;
 
 class SubscriptionTest extends TestCase
 {
@@ -126,20 +126,14 @@ class SubscriptionTest extends TestCase
         $routes = Route::getRoutes();
 
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.index')
+            $routes->hasNamedRoute('statamic.charge.subscriptions.store')
         );
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.store')
-        );
-        $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.show')
-        );
-        $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.update')
+            $routes->hasNamedRoute('statamic.charge.subscriptions.update')
         );
 
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.subscription.destroy')
+            $routes->hasNamedRoute('statamic.charge.subscriptions.destroy')
         );
 
         $this->assertTrue($routes->hasNamedRoute('statamic.charge.webhook'));
@@ -149,7 +143,7 @@ class SubscriptionTest extends TestCase
     public function redirected_to_login_when_logged_out()
     {
         $this->post(
-            route('statamic.charge.subscription.store')
+            route('statamic.charge.subscriptions.store')
         )->assertRedirect(route('login'));
     }
 
@@ -159,7 +153,7 @@ class SubscriptionTest extends TestCase
         $user = $this->createCustomer('subscriptions_can_be_created');
 
         $response = $this->actingAs($user)->post(
-            route('statamic.charge.subscription.store'),
+            route('statamic.charge.subscriptions.store'),
             []
         );
 
@@ -180,7 +174,7 @@ class SubscriptionTest extends TestCase
 
         $this
             ->actingAs($user)
-            ->get(route('statamic.charge.subscription.show', [
+            ->get(route('statamic.charge.subscriptions.show', [
                 'subscription' => $subscription->id,
             ]))
             ->assertOK()
@@ -192,7 +186,7 @@ class SubscriptionTest extends TestCase
 
         $this
             ->actingAs($this->createCustomer('no-subscriptions'))
-            ->get(route('statamic.charge.subscription.show', [
+            ->get(route('statamic.charge.subscriptions.show', [
                 'name' => $subscription->id,
             ]))->assertForbidden();
     }
@@ -202,7 +196,7 @@ class SubscriptionTest extends TestCase
     {
         $user = $this->createCustomer('subscriptions_can_be_created');
 
-        $this->actingAs($user)->post(route('statamic.charge.subscription.store'), [
+        $this->actingAs($user)->post(route('statamic.charge.subscriptions.store'), [
             'name' => 'test-subscription',
             'plan' => static::$planId,
             'payment_method' => 'pm_card_visa',
@@ -231,7 +225,7 @@ class SubscriptionTest extends TestCase
             ->create('pm_card_visa');
 
         $response = $this->actingAs($user1)->delete(
-            route('statamic.charge.subscription.cancel', [
+            route('statamic.charge.subscriptions.cancel', [
                 'subscription' => $subscription1->id,
             ])
         );
@@ -254,7 +248,7 @@ class SubscriptionTest extends TestCase
         );
 
         $response = $this->actingAs($user2)->delete(
-            route('statamic.charge.subscription.cancel', ['subscription' => $subscription2->id]),
+            route('statamic.charge.subscriptions.cancel', ['subscription' => $subscription2->id]),
             ['cancel_immediately' => true]
         );
         $response->assertForbidden();
@@ -270,7 +264,7 @@ class SubscriptionTest extends TestCase
             ->create('pm_card_visa');
 
         $response = $this->actingAs($user)->patch(
-            route('statamic.charge.subscription.update', ['subscription' => $subscription->id]),
+            route('statamic.charge.subscriptions.update', ['subscription' => $subscription->id]),
             [
                 'plan' => static::$premiumPlanId,
                 'quantity' => 3,
@@ -285,7 +279,7 @@ class SubscriptionTest extends TestCase
 
         // Auth::login($user2);
         // $response = $this->delete(
-        //     route('statamic.charge.subscription.cancel', [
+        //     route('statamic.charge.subscriptions.cancel', [
         //         'name' => $subscription2->name
         //     ]),
         //     ['cancel_immediately' => true]
@@ -306,7 +300,7 @@ class SubscriptionTest extends TestCase
             ->create('pm_card_visa');
 
         $response = $this->actingAs($user)->delete(
-            route('statamic.charge.subscription.cancel', [
+            route('statamic.charge.subscriptions.cancel', [
                 'subscription' => $subscription->id,
             ]),
             [
@@ -333,9 +327,9 @@ class SubscriptionTest extends TestCase
         Mail::fake();
 
         $types = [
-            'customer.subscription.created' => CustomerSubscriptionCreated::class,
-            'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
-            'customer.subscription.canceled' => CustomerSubscriptionCanceled::class,
+            'customer.subscriptions.created' => CustomerSubscriptionCreated::class,
+            'customer.subscriptions.updated' => CustomerSubscriptionUpdated::class,
+            'customer.subscriptions.canceled' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
             'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
@@ -360,7 +354,7 @@ class SubscriptionTest extends TestCase
         dd(Role::all());
 
         $response = $this->postJson(route('statamic.charge.webhook'), [
-            'type' => 'customer.subscription.created',
+            'type' => 'customer.subscriptions.created',
         ])->assertOk();
 
         /** @var User */
