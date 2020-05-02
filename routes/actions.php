@@ -8,16 +8,15 @@ use Silentz\Charge\Http\Controllers\Web\SubscriptionController;
 Route::name('charge.')->group(function () {
     Route::post('webhook', [WebhookController::class, 'handleWebhook'])->name('webhook');
     Route::middleware('auth')->group(function () {
-        Route::name('subscription.')->group(function () {
-            Route::get('subscription/{subscription}', [SubscriptionController::class, 'show'])->name('get');
-            Route::post('subscription', [SubscriptionController::class, 'store'])->name('store');
-            Route::patch('subscription/{subscription}', [SubscriptionController::class, 'update'])->name('update');
-            Route::delete('subscription/{subscription}', [SubscriptionController::class, 'destroy'])->name('destroy');
+        Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+            Route::post('/', [SubscriptionController::class, 'store'])->name('store');
+            Route::patch('{name}', [SubscriptionController::class, 'update'])->name('update');
+            Route::delete('{name}', [SubscriptionController::class, 'destroy'])->name('destroy');
         });
 
-        Route::name('customer.')->group(function () {
-            Route::get('customer', [CustomerController::class, 'show'])->name('show');
-            Route::patch('customer', [CustomerController::class, 'update'])->name('update');
+        Route::name('customers.')->group(function () {
+            Route::get('customers', [CustomerController::class, 'show'])->name('show');
+            Route::patch('customers', [CustomerController::class, 'update'])->name('update');
         });
     });
 });
