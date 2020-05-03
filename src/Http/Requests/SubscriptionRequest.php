@@ -6,7 +6,16 @@ class SubscriptionRequest extends ChargeRequest
 {
     public function authorize()
     {
-        return $this->user()->subscribed($this->name);
+        if (! $user = $this->user()) {
+            return false;
+        }
+
+        return $user->subscribed($this->name);
+    }
+
+    protected function failedAuthorization()
+    {
+
     }
 
     public function rules()
