@@ -66,7 +66,7 @@ class SubscriptionRequestTest extends TestCase
         $this->assertEquals(
             [
                 'plan' => 'required',
-                'quantity' => 'sometimes|integer',
+                'quantity' => 'sometimes|required|integer',
             ],
             $request->rules()
         );
