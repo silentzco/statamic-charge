@@ -2,12 +2,13 @@
 
 namespace Silentz\Charge\Listeners;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
-use Silentz\Charge\Mail\CustomerUpdated;
 use Laravel\Cashier\Events\WebhookHandled;
+use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
 use Silentz\Charge\Mail\CustomerSubscriptionCreated;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
-use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
+use Silentz\Charge\Mail\CustomerUpdated;
 use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 
 class HandleWebhook
@@ -19,10 +20,14 @@ class HandleWebhook
             'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
             'customer.subscription.deleted' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
-            'invoice.payment_action_required' => InvoicePaymentActionRequired::class
+            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
-        $class = $events[$event->payload['type']];
+        $type = $event->payload['type'];
+
+        if (! $class = Arr::get($events, $type)) {
+            return;
+        }
 
         // should I grab the user and the subscription here to pass to the mailables?
 
