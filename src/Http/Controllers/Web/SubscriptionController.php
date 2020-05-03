@@ -27,10 +27,8 @@ class SubscriptionController extends Controller
         }
     }
 
-    public function update(UpdateSubscriptionRequest $request): RedirectResponse
+    public function update(Subscription $subscription, UpdateSubscriptionRequest $request): RedirectResponse
     {
-        $subscription = $request->user()->subscription($request->name);
-
         $plan = $request->get('plan');
 
         try {
@@ -47,12 +45,14 @@ class SubscriptionController extends Controller
         }
     }
 
-    public function destroy(SubscriptionRequest $request): RedirectResponse
+    public function destroy(Subscription $subscription, SubscriptionRequest $request): RedirectResponse
     {
         try {
-            $subscription = $request->user()->subscription($request->name);
-
-            $subscription = $request->cancel_immediately ? $subscription->cancelNow() : $subscription->cancel();
+            if ($request->cancel_immediately) {
+                $subscription->cancelNow();
+            } else {
+                $subscription->cancel();
+            }
 
             return $this->withSuccess($subscription, $request);
         } catch (ApiErrorException $e) {

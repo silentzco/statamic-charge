@@ -10,12 +10,7 @@ class SubscriptionRequest extends ChargeRequest
             return false;
         }
 
-        return $user->subscribed($this->name);
-    }
-
-    protected function failedAuthorization()
-    {
-
+        return $this->subscription->user_id == $user->id;
     }
 
     public function rules()
