@@ -3,13 +3,13 @@
 namespace Silentz\Charge;
 
 use Laravel\Cashier\Cashier;
-use Statamic\Facades\CP\Nav;
-use Statamic\Facades\Permission;
+use Laravel\Cashier\CashierServiceProvider;
+use Laravel\Cashier\Events\WebhookHandled;
+use Silentz\Charge\Listeners\HandleWebhook;
 use Silentz\Charge\Tags\Subscription;
 use Silentz\Charge\Tags\Subscriptions;
-use Laravel\Cashier\Events\WebhookHandled;
-use Laravel\Cashier\CashierServiceProvider;
-use Silentz\Charge\Listeners\HandleWebhook;
+use Statamic\Facades\CP\Nav;
+use Statamic\Facades\Permission;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
