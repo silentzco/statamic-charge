@@ -34,7 +34,6 @@ abstract class FeatureTestCase extends TestCase
         Eloquent::unguard();
 
         $this->loadMigrationsFrom(__DIR__.'/../__migrations__');
-        $this->loadMigrationsFrom(__DIR__.'../../../../laravel/cashier/database/migrations');
     }
 
     protected static function deleteStripeResource(ApiResource $resource)
