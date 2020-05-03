@@ -12,7 +12,7 @@ class Subscription extends BaseTag
     public function cancel()
     {
         return $this->createForm(
-            route('statamic.charge.subscriptions.destroy', ['name' => $this->get('name')]),
+            route('statamic.charge.subscriptions.destroy', ['subscription' => $this->get('id')]),
             [],
             'DELETE'
         );
@@ -20,11 +20,9 @@ class Subscription extends BaseTag
 
     public function edit()
     {
-        $name = $this->get('name');
-
         return $this->createForm(
-            route('statamic.charge.subscription.edit', ['name' => $name]),
-            current_user()->subscription($name)->toArray(),
+            route('statamic.charge.subscriptions.update', ['subscription' => $this->get('id')]),
+            [],
             'PATCH'
         );
     }
