@@ -2,6 +2,8 @@
 
 namespace Silentz\Charge\Tests\Feature;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -306,22 +308,36 @@ class SubscriptionTest extends FeatureTestCase
     /** @test */
     public function adds_roles_when_subscription_created()
     {
-        $user = $this->createCustomer('add-roles');
-        //$subscription = $user->newSubscription('test-roles', static::$planId)->create('pm_card_visa');
+        Role::make('test-role')->title('Test Role')->save();
+
+        $roles[] = [
+            'plan' => static::$planId,
+            'role' => 'test-role',
+        ];
+
+        Config::set('charge.subscription.roles', $roles);
 
         Mail::fake();
         Event::fake();
 
-        Role::make('foo')->save();
-        dd(Role::all());
+        $user = $this->createCustomer('add-roles');
+        $user->stripe_id = 'add-role';
+        $user->save();
 
-        $response = $this->postJson(route('statamic.charge.webhook'), [
-            'type' => 'customer.subscriptions.created',
-        ])->assertOk();
+        $data = [
+            'type' => 'customer.subscription.created',
+            'customer'=> 'add-role',
+        ];
+
+        Arr::set($data, 'data.object.items.data.0.plan.id', static::$planId);
+
+        // $user->newSubscription('test-roles', static::$planId)->create('pm_card_visa');
+
+        $response = $this->postJson(route('statamic.charge.webhook'), $data)->assertOk();
 
         /** @var User */
         $statamicUser = UserAPI::fromUser($user);
 
-        $this->assertTrue($statamicUser->hasRole('foo'));
+        $this->assertTrue($statamicUser->hasRole('test-role'));
     }
 }
