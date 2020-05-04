@@ -14,7 +14,7 @@ class WebhookController extends CashierController
     protected function handleCustomerSubscriptionCreated(array $payload): Response
     {
         /** @var AuthUser */
-        $user = User::fromUser(Cashier::findBillable($payload['customer']));
+        $user = User::fromUser(Cashier::findBillable(Arr::get($payload, 'data.object.customer')));
         $plan = Arr::get($payload, 'data.object.items.data.0.plan.id');
 
         $rolePlan = collect(config('charge.subscription.roles'))->firstWhere('plan', $plan);
