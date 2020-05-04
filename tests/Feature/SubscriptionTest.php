@@ -331,9 +331,8 @@ class SubscriptionTest extends FeatureTestCase
 
         Arr::set($data, 'data.object.items.data.0.plan.id', static::$planId);
 
-        // $user->newSubscription('test-roles', static::$planId)->create('pm_card_visa');
-
-        $response = $this->postJson(route('statamic.charge.webhook'), $data)->assertOk();
+        $this->postJson(route('statamic.charge.webhook'), $data)
+            ->assertOk();
 
         /** @var User */
         $statamicUser = UserAPI::fromUser($user);
