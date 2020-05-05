@@ -2,15 +2,9 @@
 
 namespace Silentz\Charge\Tests\Feature;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Statamic\Auth\User;
 use Statamic\Facades\Role;
-use Statamic\Facades\User as UserAPI;
 use Stripe\Coupon;
 use Stripe\Plan;
 use Stripe\Product;
@@ -303,39 +297,5 @@ class SubscriptionTest extends FeatureTestCase
         );
 
         $response->assertRedirect('/cancel/success');
-    }
-
-    /** @test */
-    public function adds_roles_when_subscription_created()
-    {
-        Role::make('test-role')->title('Test Role')->save();
-
-        $roles[] = [
-            'plan' => static::$planId,
-            'role' => 'test-role',
-        ];
-
-        Config::set('charge.subscription.roles', $roles);
-
-        Mail::fake();
-        Event::fake();
-
-        $user = $this->createCustomer('add-roles');
-        $user->stripe_id = 'add-role';
-        $user->save();
-
-        $data = [];
-
-        Arr::set($data, 'type', 'customer.subscription.created');
-        Arr::set($data, 'data.object.customer', 'add-role');
-        Arr::set($data, 'data.object.plan.id', static::$planId);
-
-        $this->postJson(route('statamic.charge.webhook'), $data)
-            ->assertOk();
-
-        /** @var User */
-        $statamicUser = UserAPI::fromUser($user);
-
-        $this->assertTrue($statamicUser->hasRole('test-role'));
     }
 }
