@@ -328,7 +328,7 @@ class SubscriptionTest extends FeatureTestCase
 
         Arr::set($data, 'type', 'customer.subscription.created');
         Arr::set($data, 'data.object.customer', 'add-role');
-        Arr::set($data, 'data.object.items.data.0.plan.id', static::$planId);
+        Arr::set($data, 'data.object.plan.id', static::$planId);
 
         $this->postJson(route('statamic.charge.webhook'), $data)
             ->assertOk();
