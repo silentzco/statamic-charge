@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Crypt;
 
 class ChargeRequest extends FormRequest
 {
+    public function __construct()
+    {
+        $this->errorBag = 'charge';
+    }
+
     protected function prepareForValidation()
     {
         if ($params = $this->input('_params', '')) {
