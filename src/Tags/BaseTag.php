@@ -2,9 +2,9 @@
 
 namespace Silentz\Charge\Tags;
 
-use Statamic\Tags\Tags;
 use Illuminate\Support\Facades\Crypt;
 use Statamic\Tags\Concerns\RendersForms;
+use Statamic\Tags\Tags;
 
 abstract class BaseTag extends Tags
 {
@@ -75,7 +75,7 @@ abstract class BaseTag extends Tags
      **/
     public function details(): ?array
     {
-        return $this->success() ? session('charege.details') : [];
+        return $this->success() ? session('charge.details') : [];
     }
 
     /**
