@@ -10,33 +10,22 @@ abstract class BaseTag extends Tags
 {
     use RendersForms;
 
+    private static $knownParams = ['redirect', 'error_redirect', 'action_needed_redirect', 'name'];
+
     protected function createForm(string $action, array $data = [], string $method = 'POST'): string
     {
-        $data = $this->setSessionData($data);
+        $html = $this->formOpen($action, $method, static::$knownParams);
 
-        $knownParams = ['redirect', 'error_redirect', 'action_needed_redirect', 'name'];
+        $html .= $this->hideParams();
 
-        $html = $this->formOpen($action, $method, $knownParams);
-
-        $params = [];
-        if ($redirect = $this->get('redirect')) {
-            $params['redirect'] = $redirect;
-        }
-
-        if ($error_redirect = $this->get('error_redirect')) {
-            $params['error_redirect'] = $error_redirect;
-        }
-
-        $html .= '<input type="hidden" name="_params" value="'.Crypt::encrypt($params).'" />';
-
-        $html .= $this->parse($data);
+        $html .= $this->parse($this->sessionData($data));
 
         $html .= $this->formClose();
 
         return $html;
     }
 
-    protected function setSessionData($data)
+    protected function sessionData($data = [])
     {
         if ($errors = $this->errors()) {
             $data['errors'] = $errors;
@@ -44,15 +33,32 @@ abstract class BaseTag extends Tags
 
         if ($this->requiresAction()) {
             $data['requires_action'] = true;
-            $data['client_secret'] = $this->flash->get('client_secret');
+            $data['action'] = session('action');
+            $data['payment_method'] = session('payment_method');
         }
 
         if ($success = $this->success()) {
             $data['success'] = $success;
-            $data['details'] = $this->flash->get('details');
+            $data['subscription'] = session('subscription');
         }
 
         return $data;
+    }
+
+    private function hideParams(): string
+    {
+        return '<input type="hidden" name="_params" value="'.Crypt::encrypt($this->params()).'" />';
+    }
+
+    private function params(): array
+    {
+        return collect(static::$knownParams)->map(function ($param, $ignore) {
+            if ($redirect = $this->get($param)) {
+                return $params[$param] = $redirect;
+            }
+        })->filter()
+        ->values()
+        ->all();
     }
 
     /**
@@ -76,6 +82,11 @@ abstract class BaseTag extends Tags
     public function details(): ?array
     {
         return $this->success() ? session('charge.details') : [];
+    }
+
+    public function paymentIntent(): ?array
+    {
+        return session('charge.payment_intent');
     }
 
     /**
