@@ -4,7 +4,7 @@ namespace Silentz\Charge\Tags;
 
 class Subscriptions extends BaseTag
 {
-    public function list()
+    public function index()
     {
         return current_user()->subscriptions()->get()->toArray();
     }
