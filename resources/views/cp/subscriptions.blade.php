@@ -25,7 +25,7 @@
                         <td>{{ $subscription->stripe_status }}</td>
                         <td>{{ $subscription->ends_at }}</td>
                         <td>
-                            <subscription-actions route="{{ cp_route('charge.subscription.destroy', ['subscription' => $subscription->id]) }}">
+                            <subscription-actions route="{{ cp_route('charge.subscriptions.destroy', ['subscription' => $subscription->id]) }}">
                             </subscription-actions>
                         </td>
                     </tr>
