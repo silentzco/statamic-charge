@@ -15,7 +15,6 @@ class SubscriptionRequest extends ChargeRequest
 
     public function rules()
     {
-        return [
-        ];
+        return [];
     }
 }

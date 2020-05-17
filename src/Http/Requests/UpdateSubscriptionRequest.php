@@ -7,7 +7,7 @@ class UpdateSubscriptionRequest extends SubscriptionRequest
     public function rules()
     {
         return [
-            'plan' => 'required',
+            'plan' => 'sometimes|required|string',
             'quantity' => 'sometimes|required|integer',
         ];
     }

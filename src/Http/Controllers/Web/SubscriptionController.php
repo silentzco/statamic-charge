@@ -21,7 +21,8 @@ class SubscriptionController extends Controller
     {
         try {
             $subscription = $request->user()
-                ->newSubscription($request->name, $request->plan)
+                ->newSubscription($request->name)
+                ->plan($request->plan, $request->quantity)
                 ->create($request->payment_method);
 
             return $this->withSuccess($subscription, $request);
@@ -37,7 +38,7 @@ class SubscriptionController extends Controller
         $plan = $request->get('plan');
 
         try {
-            if ($plan != $subscription->stripe_plan) {
+            if ($plan && $plan != $subscription->stripe_plan) {
                 $subscription->swap($plan);
             }
 

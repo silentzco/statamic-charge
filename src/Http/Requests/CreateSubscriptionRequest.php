@@ -10,6 +10,7 @@ class CreateSubscriptionRequest extends ChargeRequest
             'name' => 'required',
             'plan' => 'required',
             'payment_method' => 'required',
+            'quantity' => 'sometimes|required|integer',
         ];
     }
 }
