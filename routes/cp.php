@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Silentz\Charge\Http\Controllers\Cp\SettingsController;
 use Silentz\Charge\Http\Controllers\Cp\SubscriptionController;
 use Silentz\Charge\Http\Controllers\Web\CustomerController;
 
@@ -13,5 +14,10 @@ Route::name('charge.')->prefix('charge')->group(function () {
 
     Route::prefix('customers')->name('customers.')->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingsController::class, 'show'])->name('show');
+        Route::post('/', [SettingsController::class, 'update'])->name('update');
     });
 });

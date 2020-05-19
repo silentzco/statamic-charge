@@ -80,7 +80,12 @@ class ServiceProvider extends AddonServiceProvider
             $nav->tools('Charge')
                 ->route('charge.index')
                 ->can('access charge')
-                ->icon('shield-key');
+                ->icon('shield-key')
+                ->children([
+                    'Subscriptions' => cp_route('charge.subscriptions.index'),
+                    'Customers' => cp_route('charge.customers.index'),
+                    'Settings' => cp_route('charge.settings.show'),
+                ]);
         });
     }
 
