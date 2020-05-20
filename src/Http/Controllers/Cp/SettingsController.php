@@ -3,10 +3,10 @@
 namespace Silentz\Charge\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+use Silentz\Charge\Configurator\Configurator;
 use Statamic\Facades\Role;
 use Statamic\Http\Controllers\CP\CpController;
-use Statamic\Migrator\Configurator;
 use Statamic\Support\Arr;
 use Stripe\Plan;
 use Stripe\Stripe;
