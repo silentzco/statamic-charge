@@ -24,8 +24,17 @@ class SettingsController extends CpController
     public function show()
     {
         $plans = Arr::get(Plan::all(), 'data', []);
-        $roles = Role::all();
+        $roles = Role::all()->map(function ($role) {
+            return [
+                'id' => $role->handle(),
+                'title' => $role->title(),
+                'handle' => $role->handle(),
+            ];
+        })->values();
+
         $settings = config('charge');
+
+        Log::info(json_encode($roles));
 
         return view(
             'charge::cp.settings',
