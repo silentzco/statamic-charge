@@ -3,8 +3,8 @@
 namespace Silentz\Charge\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Silentz\Charge\Configurator\Configurator;
+use Statamic\Facades\Folder;
 use Statamic\Facades\Role;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Support\Arr;
@@ -28,29 +28,33 @@ class SettingsController extends CpController
             return [
                 'id' => $role->handle(),
                 'title' => $role->title(),
-                'handle' => $role->handle(),
             ];
         })->values();
 
         $settings = config('charge');
-
-        Log::info(json_encode($roles));
+        $templates = $this->templates();
 
         return view(
             'charge::cp.settings',
-            [
-                'plans' => $plans,
-                'roles'=> $roles,
-                'settings'=>  $settings,
-            ]
+            compact('plans', 'roles', 'settings', 'templates')
         );
     }
 
     public function update(Request $request)
     {
-        $rolePlans = $request->rolePlan;
-        $this->configurator->set('subscription.roles', $rolePlans);
+        $this->configurator->set('subscription', $request->input('subscription', []));
+        $this->configurator->set('email', $request->input('email', []));
+        $this->configurator->refresh();
 
         return back();
+    }
+
+    public function templates()
+    {
+        return collect(Folder::disk('resources')
+            ->getFilesRecursively('views'))
+            ->map(function ($view) {
+                return str_replace_first('views/', '', str_before($view, '.'));
+            });
     }
 }
