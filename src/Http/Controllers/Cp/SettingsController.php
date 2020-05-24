@@ -4,11 +4,12 @@ namespace Silentz\Charge\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Silentz\Charge\Configurator\Configurator;
-use Statamic\Facades\Folder;
-use Statamic\Facades\Role;
+use Statamic\Facades\Blueprint as BlueprintAPI;
+use Statamic\Facades\File;
+use Statamic\Facades\YAML;
+use Statamic\Fields\Blueprint;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Support\Arr;
-use Stripe\Plan;
 use Stripe\Stripe;
 
 class SettingsController extends CpController
@@ -21,40 +22,50 @@ class SettingsController extends CpController
         $this->configurator = Configurator::file('charge.php');
     }
 
-    public function show()
+    public function edit()
     {
-        $plans = Arr::get(Plan::all(), 'data', []);
-        $roles = Role::all()->map(function ($role) {
-            return [
-                'id' => $role->handle(),
-                'title' => $role->title(),
-            ];
-        })->values();
+        $blueprint = $this->blueprint();
 
-        $settings = config('charge');
-        $templates = $this->templates();
+        $fields = $blueprint->fields()->addValues(config('charge'))->preProcess();
 
-        return view(
-            'charge::cp.settings',
-            compact('plans', 'roles', 'settings', 'templates')
-        );
+        return view('charge::cp.settings', [
+            'blueprint' => $blueprint->toPublishArray(),
+            'values'    => $fields->values(),
+            'meta'      => $fields->meta(),
+        ]);
     }
 
     public function update(Request $request)
     {
-        $this->configurator->set('subscription', $request->input('subscription', []));
-        $this->configurator->set('email', $request->input('email', []));
-        $this->configurator->refresh();
+        $blueprint = $this->blueprint();
+
+        $fields = $blueprint->fields()->addValues($request->all());
+
+        $fields->validate();
+
+        $this->configurator->setAll($this->stripSections($fields->process()->values()));
 
         return back();
     }
 
-    public function templates()
+    private function blueprint(): Blueprint
     {
-        return collect(Folder::disk('resources')
-            ->getFilesRecursively('views'))
-            ->map(function ($view) {
-                return str_replace_first('views/', '', str_before($view, '.'));
-            });
+        $blueprintPath = __DIR__.'/../../../../resources/blueprints/settings.yaml';
+
+        return BlueprintAPI::make('charge-settings')
+            ->setContents(YAML::parse(File::get($blueprintPath)));
+    }
+
+    private function stripSections($data)
+    {
+        $currentSections = [
+            'subscription',
+            'email',
+            'one_time_emails',
+            'subscription_emails',
+            'customer_emails',
+        ];
+
+        return Arr::except($data, $currentSections);
     }
 }

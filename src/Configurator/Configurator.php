@@ -59,6 +59,15 @@ class Configurator
         return $this;
     }
 
+    public function setAll($data)
+    {
+        foreach ($data as $key => $value) {
+            $this->set($key, $value);
+        }
+
+        // $this->normalize();
+    }
+
     /**
      * Set config value.
      *
@@ -79,30 +88,13 @@ class Configurator
             case $this->attemptToSetArrayValue($key, $value):
             case $this->attemptToSetNonArrayValue($key, $value):
             case $this->attemptToSetNewValue($key, $value):
+                // break;
                 return $this->normalize();
             default:
                 throw new \Exception('Could not set config value');
         }
 
         return $this;
-    }
-
-    /**
-     * Merge into array config.
-     *
-     * @param string $key
-     * @param array $value
-     * @return return $this
-     */
-    public function merge($key, $items)
-    {
-        $this->normalize();
-
-        foreach ($items as $childKey => $value) {
-            $this->attemptToMergeIntoArray($key, $childKey, $value);
-        }
-
-        return $this->normalize();
     }
 
     /**

@@ -1,0 +1,223 @@
+title: Settings
+sections:
+  main:
+    display: Main
+    fields:
+      -
+        handle: subscription
+        field:
+          type: section
+          localizable: false
+          listable: hidden
+          display: Subscription
+      -
+        handle: roles_and_plans
+        field:
+          fields:
+            -
+              handle: role
+              field:
+                max_items: 1
+                mode: select
+                type: roles
+                localizable: false
+                width: 50
+                listable: hidden
+                display: Role
+            -
+              handle: plan
+              field:
+                max_items: 1
+                mode: select
+                type: plans
+                localizable: false
+                width: 50
+                listable: hidden
+                display: Plan
+          mode: table
+          reorderable: false
+          type: grid
+          localizable: false
+          listable: hidden
+          display: 'Roles and Plans'
+      -
+        handle: email
+        field:
+          type: section
+          localizable: false
+          listable: hidden
+          display: Email
+      -
+        handle: email_sender
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Email Sender'
+          validate: email
+      -
+        handle: one_time_emails
+        field:
+          type: section
+          localizable: false
+          listable: hidden
+          display: 'One Time Emails'
+      -
+        handle: one_time_payment_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Payment Template'
+          width: 50
+      -
+        handle: one_time_payment_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Payment Subject'
+          width: 50
+      -
+        handle: subscription_emails
+        field:
+          type: section
+          localizable: false
+          listable: hidden
+          display: 'Subscription Emails'
+      -
+        handle: subscription_created_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Created Template'
+          width: 50
+      -
+        handle: subscription_created_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Created Subject'
+          width: 50
+      -
+        handle: subscription_updated_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Updated Template'
+          width: 50
+      -
+        handle: subscription_updated_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Updated Subject'
+          width: 50
+      -
+        handle: subscription_canceled_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Canceled Template'
+          width: 50
+      -
+        handle: subscription_canceled_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Canceled Subject'
+          width: 50
+      -
+        handle: subscription_upcoming_payment_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Upcoming Payment Template'
+          width: 50
+      -
+        handle: subscription_upcoming_payment_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Upcoming Payment Subject'
+          width: 50
+      -
+        handle: subscription_payment_succeeded_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Payment Succeeded Template'
+          width: 50
+      -
+        handle: subscription_payment_succeeded_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Payment Succeeded Subject'
+          width: 50
+      -
+        handle: subscription_payment_failed_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Payment Failed Template'
+          width: 50
+      -
+        handle: subscription_payment_failed_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Payment Failed Subject'
+          width: 50
+      -
+        handle: customer_emails
+        field:
+          type: section
+          localizable: false
+          listable: hidden
+          display: Customer
+      -
+        handle: customer_updated_template
+        field:
+          hide_partials: true
+          type: template
+          localizable: false
+          listable: hidden
+          display: 'Updated Template'
+          width: 50
+      -
+        handle: customer_updated_subject
+        field:
+          input_type: text
+          type: text
+          localizable: false
+          listable: hidden
+          display: 'Updated Subject'
+          width: 50

@@ -5,6 +5,8 @@ namespace Silentz\Charge;
 use Laravel\Cashier\Cashier;
 use Laravel\Cashier\CashierServiceProvider;
 use Laravel\Cashier\Events\WebhookHandled;
+use Silentz\Charge\Fieldtypes\Plans;
+use Silentz\Charge\Fieldtypes\Roles;
 use Silentz\Charge\Listeners\HandleWebhook;
 use Silentz\Charge\Tags\Subscription;
 use Silentz\Charge\Tags\Subscriptions;
@@ -14,6 +16,11 @@ use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    protected $fieldtypes = [
+        Plans::class,
+        Roles::class,
+    ];
+
     protected $listen = [
         WebhookHandled::class => [HandleWebhook::class],
     ];
@@ -84,7 +91,7 @@ class ServiceProvider extends AddonServiceProvider
                 ->children([
                     'Subscriptions' => cp_route('charge.subscriptions.index'),
                     'Customers' => cp_route('charge.customers.index'),
-                    'Settings' => cp_route('charge.settings.show'),
+                    'Settings' => cp_route('charge.settings.edit'),
                 ]);
         });
     }
