@@ -26,7 +26,10 @@ class SettingsController extends CpController
     {
         $blueprint = $this->blueprint();
 
-        $fields = $blueprint->fields()->addValues(config('charge'))->preProcess();
+        // $values = $this->mapToBlueprint(config('charge'));
+        $values = config('charge');
+
+        $fields = $blueprint->fields()->addValues($values)->preProcess();
 
         return view('charge::cp.settings', [
             'blueprint' => $blueprint->toPublishArray(),
@@ -43,6 +46,7 @@ class SettingsController extends CpController
 
         $fields->validate();
 
+        // $this->configurator->setAll($this->mapToConfig($this->stripSections($fields->process()->values())));
         $this->configurator->setAll($this->stripSections($fields->process()->values()));
 
         return back();
@@ -54,6 +58,24 @@ class SettingsController extends CpController
 
         return BlueprintAPI::make('charge-settings')
             ->setContents(YAML::parse(File::get($blueprintPath)));
+    }
+
+    private function mapToBlueprint($config)
+    {
+        return array_merge(
+            Arr::get($config, 'subscription', []),
+            Arr::get($config, 'email', [])
+        );
+    }
+
+    private function mapToConfig($blueprint)
+    {
+        $config = [];
+
+        Arr::set($config, 'email', Arr::except($blueprint, 'roles_and_plans'));
+        Arr::set($config, 'subscription.roles_and_plans', Arr::get($blueprint, 'roles_and_plans'));
+
+        return $config;
     }
 
     private function stripSections($data)

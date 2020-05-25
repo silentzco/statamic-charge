@@ -64,8 +64,6 @@ class Configurator
         foreach ($data as $key => $value) {
             $this->set($key, $value);
         }
-
-        // $this->normalize();
     }
 
     /**
