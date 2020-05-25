@@ -17,7 +17,6 @@ Route::name('charge.')->prefix('charge')->group(function () {
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('/', [SettingsController::class, 'show'])->name('show');
         Route::get('/edit', [SettingsController::class, 'edit'])->name('edit');
         Route::post('/', [SettingsController::class, 'update'])->name('update');
     });
