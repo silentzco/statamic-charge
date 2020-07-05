@@ -21,8 +21,8 @@ class SubscriptionController extends Controller
     {
         try {
             $subscription = $request->user()
-                ->newSubscription($request->name)
-                ->plan($request->plan, $request->quantity)
+                ->newSubscription($request->name, $request->plan)
+                ->quantity($request->quantity)
                 ->create($request->payment_method);
 
             return $this->withSuccess($subscription, $request);
