@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /*
+     * When a user subscribes to a plan, which role should they be given?
+     */
     'roles_and_plans' => [
         [
             'plan' => '',
@@ -8,7 +11,13 @@ return [
         ],
     ],
 
+    // send email address for all Charge emails
     'email_sender' => '',
+
+    /*
+     * For all below, which template & subject to use for which email.
+     * Set to null to not send that email
+     */
     'one_time_payment_template' => '',
     'one_time_payment_subject' => '',
 
