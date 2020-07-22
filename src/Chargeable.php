@@ -1,6 +1,6 @@
 <?php
 
-namespace Silentz\Charge\Concerns;
+namespace Silentz\Charge;
 
 use Laravel\Cashier\Billable;
 use Statamic\Facades\User;
