@@ -3,9 +3,9 @@
 namespace Silentz\Charge\Models;
 
 use Illuminate\Foundation\Auth\User as Model;
-use Silentz\Charge\Traits\Charge;
+use Silentz\Charge\Chargeable;
 
 class User extends Model
 {
-    use Charge;
+    use Chargeable;
 }
