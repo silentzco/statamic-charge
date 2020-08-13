@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Silentz\Charge\Http\Controllers\Web\CustomerController;
 use Silentz\Charge\Http\Controllers\Web\SubscriptionController;
 use Silentz\Charge\Http\Controllers\WebhookController;
 
 Route::name('charge.')->group(function () {
-    Route::post('webhook', [WebhookController::class, 'handleWebhook'])->name('webhook');
+    Route::post('webhook', [WebhookController::class, 'handleWebhook'])
+        ->withoutMiddleware([VerifyCsrfToken::class])
+        ->name('webhook');
     Route::middleware('auth')->group(function () {
         Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
             Route::post('/', [SubscriptionController::class, 'store'])->name('store');
