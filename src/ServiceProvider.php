@@ -43,7 +43,6 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->bootConfig();
         $this->bootFactories();
         $this->bootNav();
         $this->bootPermissions();
@@ -53,27 +52,6 @@ class ServiceProvider extends AddonServiceProvider
     {
         Cashier::ignoreRoutes();
         $this->app->register(CashierServiceProvider::class);
-
-        $this->configure();
-    }
-
-    /**
-     * Setup the configuration for Charge.
-     *
-     * @return void
-     */
-    protected function configure()
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/charge.php', 'charge'
-        );
-    }
-
-    private function bootConfig()
-    {
-        $this->publishes([
-            __DIR__.'/../config/charge.php' => $this->app->configPath('charge.php'),
-        ]);
     }
 
     private function bootFactories()
