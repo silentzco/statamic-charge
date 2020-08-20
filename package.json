@@ -12,12 +12,11 @@
     },
     "dependencies": {
         "axios": "^0.19.0",
-        "cross-env": "^6.0.3",
+        "cross-env": "^7.0",
         "laravel-mix": "^5.0.0",
         "vue": "^2.6.10"
     },
     "devDependencies": {
-        "cypress": "^4.3.0",
         "faker": "^4.1.0",
         "vue-template-compiler": "^2.6.10"
     }
