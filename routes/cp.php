@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Silentz\Charge\Http\Controllers\Cp\CustomerController;
 use Silentz\Charge\Http\Controllers\Cp\SettingsController;
 use Silentz\Charge\Http\Controllers\Cp\SubscriptionController;
-use Silentz\Charge\Http\Controllers\Web\CustomerController;
 
 Route::name('charge.')->prefix('charge')->group(function () {
     Route::redirect('/', 'charge/subscriptions')->name('index');

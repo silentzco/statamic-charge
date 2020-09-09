@@ -2,6 +2,7 @@
 
 namespace Silentz\Charge;
 
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\Cashier\Billable;
 use Statamic\Facades\User;
 use Statamic\Support\Arr;
@@ -9,6 +10,11 @@ use Statamic\Support\Arr;
 trait Chargeable
 {
     use Billable;
+
+    public function scopeCustomers(Builder $query)
+    {
+        return $query->whereNotNull('stripe_id');
+    }
 
     public function swapPlans($newPlan, $oldPlan = null)
     {
