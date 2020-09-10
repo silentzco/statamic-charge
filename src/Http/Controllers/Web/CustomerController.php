@@ -2,9 +2,9 @@
 
 namespace Silentz\Charge\Http\Controllers\Web;
 
-use Silentz\Charge\Models\User;
-use Statamic\Http\Controllers\Controller;
+use App\User;
 use Silentz\Charge\Http\Requests\UpdateCustomerRequest;
+use Statamic\Http\Controllers\Controller;
 
 class CustomerController extends Controller
 {
@@ -16,10 +16,11 @@ class CustomerController extends Controller
     public function update(UpdateCustomerRequest $request): User
     {
         $request->validated();
-        $pm = $request->get('payment_method');
 
-        current_user()->updateDefaultPaymentMethod($pm);
+        $user = current_user();
 
-        return current_user();
+        $user->updateDefaultPaymentMethod($request->get('payment_method'));
+
+        return $user;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Silentz\Charge\Models\User;
+use App\User;
 
-if (!function_exists('current_user')) {
+if (! function_exists('current_user')) {
     function current_user(): ?User
     {
         return auth()->user();
