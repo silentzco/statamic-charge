@@ -53,7 +53,7 @@ abstract class BaseTag extends Tags
     private function params(): array
     {
         return collect(static::$knownParams)->map(function ($param, $ignore) {
-            if ($redirect = $this->get($param)) {
+            if ($redirect = $this->params->get($param)) {
                 return $params[$param] = $redirect;
             }
         })->filter()
@@ -61,10 +61,6 @@ abstract class BaseTag extends Tags
         ->all();
     }
 
-    /**
-     * Maps to {{ charge:success }}.
-     *
-     **/
     public function success(): bool
     {
         return session()->has('charge.success');
@@ -75,10 +71,6 @@ abstract class BaseTag extends Tags
         return session()->has('charge.requires_action');
     }
 
-    /**
-     * Maps to {{ charge:details }}.
-     *
-     **/
     public function details(): ?array
     {
         return $this->success() ? session('charge.details') : [];
@@ -109,9 +101,6 @@ abstract class BaseTag extends Tags
             : $errors;  // Otherwise, parse the content loop.
     }
 
-    /**
-     * Does this form have errors?
-     */
     private function hasErrors(): bool
     {
         return (session()->has('errors'))
@@ -119,11 +108,6 @@ abstract class BaseTag extends Tags
             : false;
     }
 
-    /**
-     * Get the errorBag from session.
-     *
-     * @return object
-     */
     private function getErrorBag()
     {
         if ($this->hasErrors()) {
