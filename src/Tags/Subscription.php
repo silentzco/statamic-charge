@@ -2,35 +2,29 @@
 
 namespace Silentz\Charge\Tags;
 
-use Illuminate\Support\Facades\Auth;
-use Silentz\Charge\Models\User;
-
 class Subscription extends BaseTag
 {
-    public function setupIntent()
+    public function setupIntent(): string
     {
-        /** @var User */
-        $user = Auth::user();
-
-        return $user->createSetupIntent()->client_secret;
+        return current_user()->createSetupIntent()->client_secret;
     }
 
-    public function create()
+    public function create(): string
     {
         return $this->createForm(
             route('statamic.charge.subscriptions.store'));
     }
 
-    public function cancel()
+    public function cancel(): string
     {
         return $this->createForm(
-            route('statamic.charge.subscriptions.destroy', ['subscription' => $this->get('id')]),
+            route('statamic.charge.subscriptions.destroy', ['subscription' => $this->params->get('id')]),
             [],
             'DELETE'
         );
     }
 
-    public function edit()
+    public function edit(): string
     {
         return $this->createForm(
             route('statamic.charge.subscriptions.update', ['subscription' => $this->get('id')]),
