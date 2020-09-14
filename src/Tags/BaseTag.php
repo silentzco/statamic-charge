@@ -3,6 +3,7 @@
 namespace Silentz\Charge\Tags;
 
 use Illuminate\Support\Facades\Crypt;
+use Statamic\Support\Arr;
 use Statamic\Tags\Concerns\RendersForms;
 use Statamic\Tags\Tags;
 
@@ -52,13 +53,7 @@ abstract class BaseTag extends Tags
 
     private function params(): array
     {
-        return collect(static::$knownParams)->map(function ($param, $ignore) {
-            if ($redirect = $this->params->get($param)) {
-                return $params[$param] = $redirect;
-            }
-        })->filter()
-        ->values()
-        ->all();
+        return Arr::only($this->params->toArray(), static::$knownParams);
     }
 
     public function success(): bool
