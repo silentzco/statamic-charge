@@ -20,7 +20,7 @@
             <tbody>
                 @foreach ($subscriptions as $subscription)
                     <tr>
-                        <td>{{ $subscription->user->email }}</td>
+                        <td>{{ optional($subscription->user)->email }}</td>
                         <td>{{ $subscription->stripe_plan }}</td>
                         <td>{{ $subscription->stripe_status }}</td>
                         <td>{{ $subscription->ends_at }}</td>
