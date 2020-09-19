@@ -18,7 +18,7 @@ trait Chargeable
 
     public function swapPlans($newPlan, $oldPlan = null)
     {
-        $roles = collect(config('charge.subscription.roles'));
+        $roles = collect(config('charge.roles_and_plans'));
 
         User::fromUser($this)
             ->removeRole($this->getRole($roles, $oldPlan))
