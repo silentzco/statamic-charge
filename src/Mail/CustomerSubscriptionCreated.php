@@ -6,12 +6,14 @@ use Illuminate\Support\Arr;
 
 class CustomerSubscriptionCreated extends SubscriptionMailable
 {
+    protected $templateSetting = 'charge.emails.subscription_created.template';
+
     public function build()
     {
-        return $this->to($this->user->email)
-            ->subject(config('charge.email.subscription.created_subject'))
+        return $this
+            ->subject(config('charge.emails.subscription_created.subject'))
             ->view(
-                config('charge.email.subscription.created_template'),
+                $this->template(),
                 [
                     'first_name' => $this->user->first_name,
                     'last_name' => $this->user->last_name,
@@ -24,7 +26,7 @@ class CustomerSubscriptionCreated extends SubscriptionMailable
                     'current_period_end' => Arr::get(
                         $this->data,
                         'current_period_end'
-                    )
+                    ),
                     // @todo trial info?
                 ]
             );

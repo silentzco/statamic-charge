@@ -6,11 +6,13 @@ use Illuminate\Support\Arr;
 
 class CustomerSubscriptionUpdated extends SubscriptionMailable
 {
+    protected $templateSetting = 'charge.emails.subscription_updated.template';
+
     public function build()
     {
-        return $this->to($this->user->email)
-            ->subject(config('charge.email.subscription.updated_subject'))
-            ->view(config('charge.email.subscription.updated_template'), [
+        return $this
+            ->subject(config('charge.emails.subscription.updated_subject'))
+            ->view($this->template(), [
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
                 'plan' => Arr::get($this->data, 'items.data.0.plan.nickname'),
@@ -22,7 +24,7 @@ class CustomerSubscriptionUpdated extends SubscriptionMailable
                 'current_period_end' => Arr::get(
                     $this->data,
                     'current_period_end'
-                )
+                ),
             ]);
     }
 }

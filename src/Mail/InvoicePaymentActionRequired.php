@@ -8,6 +8,12 @@ class InvoicePaymentActionRequired extends Mailable
 {
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->view($this->template());
+    }
+
+    protected function recipient(): string
+    {
+        return '';
     }
 }

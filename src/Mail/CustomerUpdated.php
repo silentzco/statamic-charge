@@ -4,13 +4,12 @@ namespace Silentz\Charge\Mail;
 
 class CustomerUpdated extends CustomerMailable
 {
+    protected $templateSetting = 'charge.emails.customer_updated.template';
+
     public function build()
     {
-        return $this->to($this->email)
-            ->subject(config('charge.email.customer.updated_subject'))
-            ->view(
-                config('charge.email.customer.updated_template'),
-                $this->user->toArray()
-            );
+        return $this
+            ->subject(config('charge.emails.customer.updated_subject'))
+            ->view($this->template(), $this->user->toArray());
     }
 }

@@ -2,13 +2,17 @@
 
 namespace Silentz\Charge\Mail;
 
+use Statamic\Support\Arr;
+
 class CustomerSubscriptionCanceled extends SubscriptionMailable
 {
+    protected $templateSetting = 'charge.emails.subscription_canceled.template';
+
     public function build()
     {
-        return $this->to($this->user->email)
+        return $this
             ->subject(config('charge.email.subscription.canceled_subject'))
-            ->view(config('charge.email.subscription.canceled_template'), [
+            ->view($this->template(), [
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,
                 'plan' => Arr::get($this->data, 'items.data.0.plan.nickname'),
@@ -20,7 +24,7 @@ class CustomerSubscriptionCanceled extends SubscriptionMailable
                 'current_period_end' => Arr::get(
                     $this->data,
                     'current_period_end'
-                )
+                ),
             ]);
     }
 }
