@@ -21,8 +21,7 @@ class WebhookController extends CashierController
     {
         $response = parent::handleCustomerSubscriptionUpdated($payload);
 
-        $this
-            ->getUserByStripeId(Arr::get($payload, 'data.object.customer'))
+        optional($this->getUserByStripeId(Arr::get($payload, 'data.object.customer')))
             ->swapPlans(
                 Arr::get($payload, 'data.object.plan.id'),
                 Arr::get($payload, 'data.previous_attributes.plan.id')
