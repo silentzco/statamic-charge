@@ -1,10 +1,11 @@
 <?php
 
-use App\User;
+use Illuminate\Support\Facades\Auth;
 
-if (! function_exists('current_user')) {
-    function current_user(): ?User
-    {
-        return auth()->user();
-    }
+/**
+ * @return \Silentz\Charge\Chargeable
+ */
+function current_user()
+{
+    return Auth::user();
 }
