@@ -4,4 +4,4 @@
 
 Charge provides a way for you to take eithe one-time or subscription payments, for example if you'd like to charge for membership, or take donations.
 
-Document [here](https://silentz.co/addons/charge/docs)
+Documentation [here](https://silentz.co/addons/charge/docs)
