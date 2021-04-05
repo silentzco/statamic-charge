@@ -2,9 +2,7 @@
 
 namespace Silentz\Charge\Mail;
 
-use App\User;
-
-// use Silentz\Charge\Models\User;
+use Silentz\Charge\Models\User;
 
 abstract class CustomerMailable extends BaseMailable
 {
