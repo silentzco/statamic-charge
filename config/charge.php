@@ -14,7 +14,7 @@ return [
     // send email address for all Charge emails
     'email' => [
         'sender' => '',
-    ]
+    ],
 
     /*
      * For all below, which template & subject to use for which email.
