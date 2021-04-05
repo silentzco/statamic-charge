@@ -9,7 +9,7 @@ class CustomerUpdated extends CustomerMailable
     public function build()
     {
         return $this
-            ->subject(config('charge.emails.customer.updated_subject'))
+            ->subject(config('charge.emails.customer_updated.subject'))
             ->view($this->template(), $this->user->toArray());
     }
 }
