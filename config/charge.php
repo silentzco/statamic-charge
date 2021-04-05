@@ -23,8 +23,10 @@ return [
     'one_time_payment_template' => '',
     'one_time_payment_subject' => '',
 
-    'subscription_created_template' => '',
-    'subscription_created_subject' => '',
+    'subscription_created' => [
+        'template' => '',
+        'subject' => '',
+    ],
     'subscription_updated_template' => '',
     'subscription_updated_subject' => '',
     'subscription_canceled_template' => '',
