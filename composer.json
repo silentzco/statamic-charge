@@ -41,7 +41,7 @@
   "require": {
     "php": "^7.4 || ^8.0",
     "laravel/cashier": "^12.0",
-    "laravel/framework": "^7.0 || ^8.0",
+    "laravel/framework": "^7.30.3 || ^8.24",
     "pixelfear/composer-dist-plugin": "^0.1.2",
     "statamic/cms": "^3.0"
   },
