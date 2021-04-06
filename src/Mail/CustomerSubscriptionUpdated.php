@@ -11,7 +11,7 @@ class CustomerSubscriptionUpdated extends SubscriptionMailable
     public function build()
     {
         return $this
-            ->subject(config('charge.emails.subscription.updated_subject'))
+            ->subject(config('charge.emails.subscription_updated.subject'))
             ->view($this->template(), [
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,

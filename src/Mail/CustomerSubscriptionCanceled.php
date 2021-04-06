@@ -11,7 +11,7 @@ class CustomerSubscriptionCanceled extends SubscriptionMailable
     public function build()
     {
         return $this
-            ->subject(config('charge.email.subscription.canceled_subject'))
+            ->subject(config('charge.email.subscription_canceled.subject'))
             ->view($this->template(), [
                 'first_name' => $this->user->first_name,
                 'last_name' => $this->user->last_name,

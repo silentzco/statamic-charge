@@ -19,7 +19,6 @@ class HandleWebhook
             'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
             'customer.subscription.deleted' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
-            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
         if (! $class = Arr::get($events, $event->payload['type'])) {
