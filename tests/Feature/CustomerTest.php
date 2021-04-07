@@ -7,27 +7,17 @@ use Silentz\Charge\Tests\Feature\FeatureTestCase as TestCase;
 
 class CustomerTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        parent::tearDownAfterClass();
-    }
-
     /** @test */
     public function routes_exist()
     {
         $routes = Route::getRoutes();
 
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.customer.update')
+            $routes->hasNamedRoute('statamic.charge.customers.update')
         );
 
         $this->assertTrue(
-            $routes->hasNamedRoute('statamic.charge.customer.show')
+            $routes->hasNamedRoute('statamic.charge.customers.show')
         );
     }
 
@@ -37,7 +27,7 @@ class CustomerTest extends TestCase
         $user = $this->createCustomer('customers_can_be_created');
 
         $this->get(
-            route('statamic.charge.customer.show', ['user'=> $user->id])
+            route('statamic.charge.customers.show', ['user'=> $user->id])
         )->assertRedirect(route('login'));
     }
 
@@ -48,12 +38,13 @@ class CustomerTest extends TestCase
         $user->createAsStripeCustomer();
         $pm = $user->defaultPaymentMethod();
 
-        $response = $this->actingAs($user)->patch(
-            route('statamic.charge.customer.update'),
-            ['payment_method' => 'pm_card_visa']
-        );
+        $this
+            ->actingAs($user)
+            ->patch(
+                route('statamic.charge.customers.update', ['user'=>$user]),
+                ['payment_method' => 'pm_card_visa']
+            )->assertOk();
 
-        $response->assertOk();
         $this->assertNotEquals($pm, $user->defaultPaymentMethod());
     }
 }

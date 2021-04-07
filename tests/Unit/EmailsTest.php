@@ -2,8 +2,8 @@
 
 namespace Silentz\Charge\Tests\Unit;
 
-use Silentz\Charge\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use Silentz\Charge\Tests\TestCase;
 
 class EmailsTest extends TestCase
 {
@@ -14,13 +14,5 @@ class EmailsTest extends TestCase
             'charge.email.subscription.updated_template',
             'charge::emails.subscription.updated-template'
         );
-    }
-
-    /** @test */
-    public function routes_exist()
-    {
-        $this->get('csu')
-            ->assertOk()
-            ->assertSeeText('Test Plan');
     }
 }

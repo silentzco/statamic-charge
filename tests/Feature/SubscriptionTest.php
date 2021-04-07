@@ -4,6 +4,7 @@ namespace Silentz\Charge\Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Silentz\Charge\Tests\Feature\FeatureTestCase;
 use Statamic\Facades\Role;
 use Stripe\Coupon;
 use Stripe\Plan;

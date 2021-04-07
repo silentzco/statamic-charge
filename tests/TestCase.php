@@ -4,32 +4,22 @@ namespace Silentz\Charge\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
-use JMac\Testing\Traits\AdditionalAssertions;
+use Laravel\Cashier\CashierServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
-use Silentz\Charge\Models\User;
 use Silentz\Charge\ServiceProvider;
 use Statamic\Extend\Manifest;
 use Statamic\Providers\StatamicServiceProvider;
 use Statamic\Statamic;
 
-class TestCase extends OrchestraTestCase
+abstract class TestCase extends OrchestraTestCase
 {
-    use AdditionalAssertions;
-
-    protected function setUp(): void
-    {
-        require_once __DIR__.'/ExceptionHandler.php';
-
-        parent::setUp();
-
-        //        $this->withFactories(__DIR__ . '/../database/factories');
-    }
-
     protected function getPackageProviders($app)
     {
-        return [StatamicServiceProvider::class, ServiceProvider::class];
+        return [
+            CashierServiceProvider::class,
+            ServiceProvider::class,
+            StatamicServiceProvider::class,
+        ];
     }
 
     protected function getPackageAliases($app)
@@ -50,8 +40,6 @@ class TestCase extends OrchestraTestCase
             ],
         ];
 
-        Route::get('/login')->name('login');
-
         $data['data']['object'] = [
             'status' => 'active',
             'cancel_at_period_end' => true,
@@ -60,15 +48,7 @@ class TestCase extends OrchestraTestCase
 
         Arr::set($data, 'data.object.items.data.0.plan.nickname', 'Test Plan');
 
-        Route::get('/csu', function () use ($data) {
-            return new CustomerSubscriptionUpdated($data);
-        });
-
         config(['statamic.users.repository' => 'eloquent']);
-
-        Statamic::pushActionRoutes(function () {
-            return require_once realpath(__DIR__.'/../routes/actions.php');
-        });
     }
 
     protected function resolveApplicationConfiguration($app)
@@ -82,12 +62,20 @@ class TestCase extends OrchestraTestCase
         }
     }
 
-    protected function createCustomer($description = 'erin'): User
+    public function tearDown(): void
     {
-        return User::create([
-            'email' => "{$description}@cashier-test.com",
-            'name' => 'Erin Dalzell',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        ]);
+
+        // destroy $app
+        if ($this->app) {
+            $this->callBeforeApplicationDestroyedCallbacks();
+
+            // this is the issue.
+            // $this->app->flush();
+
+            $this->app = null;
+        }
+
+        // call the parent teardown
+        parent::tearDown();
     }
 }

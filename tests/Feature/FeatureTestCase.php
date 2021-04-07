@@ -3,8 +3,8 @@
 namespace Silentz\Charge\Tests\Feature;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Silentz\Charge\Models\User;
 use Silentz\Charge\Tests\TestCase;
 use Stripe\ApiResource;
 use Stripe\Exception\InvalidRequestException;
@@ -13,12 +13,21 @@ use Stripe\Stripe;
 abstract class FeatureTestCase extends TestCase
 {
     use RefreshDatabase;
-    use DatabaseMigrations;
 
     /**
      * @var string
      */
     protected static $stripePrefix = 'charge-test-';
+
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadLaravelMigrations();
+    }
+
+    protected function defineRoutes($router)
+    {
+        $router->get('/login')->name('login');
+    }
 
     public static function setUpBeforeClass(): void
     {
@@ -32,8 +41,15 @@ abstract class FeatureTestCase extends TestCase
         parent::setUp();
 
         Eloquent::unguard();
+    }
 
-        $this->loadMigrationsFrom(__DIR__.'/../__migrations__');
+    protected function createCustomer($description = 'erin'): User
+    {
+        return User::create([
+            'email' => "{$description}@cashier-test.com",
+            'name' => 'Erin Dalzell',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        ]);
     }
 
     protected static function deleteStripeResource(ApiResource $resource)
