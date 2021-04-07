@@ -8,7 +8,6 @@ use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
 use Silentz\Charge\Mail\CustomerSubscriptionCreated;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
 use Silentz\Charge\Mail\CustomerUpdated;
-use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 
 class HandleWebhook
 {
