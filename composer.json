@@ -10,6 +10,21 @@
       "role": "Founder"
     }
   ],
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "laravel/cashier": "^12.0",
+    "laravel/framework": "^7.30.3 || ^8.24",
+    "pixelfear/composer-dist-plugin": "^0.1.2",
+    "statamic/cms": "^3.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "~1.0",
+    "orchestra/testbench": "^5.0 || ^6.0",
+    "phpunit/phpunit": "^9.0",
+    "nunomaduro/collision": "^4.1 || ^5.0",
+    "jasonmccreary/laravel-test-assertions": "^1.0",
+    "doctrine/dbal": "^2.10"
+  },
   "autoload": {
     "files": [
       "src/helpers.php"
@@ -37,21 +52,6 @@
         "Silentz\\Charge\\ServiceProvider"
       ]
     }
-  },
-  "require": {
-    "php": "^7.4 || ^8.0",
-    "laravel/cashier": "^12.0",
-    "laravel/framework": "^7.30.3 || ^8.24",
-    "pixelfear/composer-dist-plugin": "^0.1.2",
-    "statamic/cms": "^3.0"
-  },
-  "require-dev": {
-    "mockery/mockery": "~1.0",
-    "orchestra/testbench": "^5.0 || ^6.0",
-    "phpunit/phpunit": "^9.0",
-    "nunomaduro/collision": "^4.1 || ^5.0",
-    "jasonmccreary/laravel-test-assertions": "^1.0",
-    "doctrine/dbal": "^2.10"
   },
   "prefer-stable": true
 }
