@@ -22,6 +22,7 @@ abstract class FeatureTestCase extends TestCase
     protected function defineDatabaseMigrations()
     {
         $this->loadLaravelMigrations();
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     protected function defineRoutes($router)
@@ -49,7 +50,6 @@ abstract class FeatureTestCase extends TestCase
             'email' => "{$description}@cashier-test.com",
             'name' => 'Erin Dalzell',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            'stripe_id' => 'cus_HaZNLvZsFWfLwp',
         ]);
     }
 

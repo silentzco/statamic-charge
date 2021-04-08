@@ -4,8 +4,8 @@ namespace Silentz\Charge\Tests\Feature;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Silentz\Charge\Tests\Feature\FeatureTestCase;
 use Statamic\Facades\Role;
+use Statamic\Facades\User;
 use Stripe\Coupon;
 use Stripe\Plan;
 use Stripe\Product;
@@ -298,5 +298,40 @@ class SubscriptionTest extends FeatureTestCase
         );
 
         $response->assertRedirect('/cancel/success');
+    }
+
+    /** @test */
+    public function can_add_role_on_subscriptions_creation()
+    {
+        $customer = $this->createCustomer('new-role');
+        $customer->stripe_id = 'cus_foo';
+        $customer->save();
+
+        Role::make('foo')->title('foo')->save();
+
+        config(['charge.roles_and_plans' => [
+            [
+                'plan' => static::$premiumPlanId,
+                'role' => 'foo',
+            ],
+        ]]);
+
+        $this->postJson(route('statamic.charge.webhook'), [
+            'id' => 'foo',
+            'type' => 'customer.subscription.created',
+            'data' => [
+                'object' => [
+                    'customer' => $customer->stripeId(),
+                    'items' => [
+                        'data' => [[
+                            'plan' => ['id' => static::$premiumPlanId],
+                        ]],
+                    ],
+                ],
+            ],
+        ]);
+
+        $user = User::findByEmail('new-role@cashier-test.com');
+        $this->assertTrue($user->hasRole('foo'));
     }
 }
