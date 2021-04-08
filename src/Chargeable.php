@@ -3,6 +3,7 @@
 namespace Silentz\Charge;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Laravel\Cashier\Billable;
 use Statamic\Facades\User;
 use Statamic\Support\Arr;
@@ -26,7 +27,7 @@ trait Chargeable
             ->save();
     }
 
-    private function getRole($roles, $plan)
+    private function getRole(Collection $roles, ?string $plan)
     {
         return Arr::get($roles->firstWhere('plan', $plan), 'role');
     }
