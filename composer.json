@@ -1,57 +1,58 @@
 {
-  "name": "silentz/charge",
-  "type": "statamic-addon",
-  "description": "One-time and subscriptions",
-  "authors": [
-    {
-      "name": "Erin Dalzell",
-      "email": "erin@silentz.co",
-      "homepage": "https://silentz.co",
-      "role": "Founder"
-    }
-  ],
-  "require": {
-    "php": "^7.4 || ^8.0",
-    "laravel/cashier": "^12.0",
-    "laravel/framework": "^7.30.3 || ^8.24",
-    "pixelfear/composer-dist-plugin": "^0.1.2",
-    "statamic/cms": "^3.0"
-  },
-  "require-dev": {
-    "mockery/mockery": "~1.0",
-    "orchestra/testbench": "^5.0 || ^6.0",
-    "phpunit/phpunit": "^9.0",
-    "nunomaduro/collision": "^4.1 || ^5.0",
-    "jasonmccreary/laravel-test-assertions": "^1.0",
-    "doctrine/dbal": "^2.10"
-  },
-  "autoload": {
-    "files": [
-      "src/helpers.php"
+    "name": "silentz/charge",
+    "type": "statamic-addon",
+    "description": "One-time and subscriptions",
+    "authors": [
+        {
+            "name": "Erin Dalzell",
+            "email": "erin@silentz.co",
+            "homepage": "https://silentz.co",
+            "role": "Founder"
+        }
     ],
-    "psr-4": {
-      "Silentz\\Charge\\": "src"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Silentz\\Charge\\Tests\\": "tests"
-    }
-  },
-  "extra": {
-    "download-dist": {
-        "url": "https://github.com/silentzco/statamic-charge/releases/download/{$version}/dist.tar.gz",
-        "path": "dist"
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "edalzell/forma": "^1.0",
+        "laravel/cashier": "^12.0",
+        "laravel/framework": "^7.30.3 || ^8.40",
+        "pixelfear/composer-dist-plugin": "^0.1.2",
+        "statamic/cms": "^3.0"
     },
-    "statamic": {
-      "name": "Charge",
-      "description": "Charge addon"
+    "require-dev": {
+        "mockery/mockery": "~1.0",
+        "orchestra/testbench": "^5.0 || ^6.0",
+        "phpunit/phpunit": "^9.0",
+        "nunomaduro/collision": "^4.1 || ^5.0",
+        "jasonmccreary/laravel-test-assertions": "^1.0",
+        "doctrine/dbal": "^2.10"
     },
-    "laravel": {
-      "providers": [
-        "Silentz\\Charge\\ServiceProvider"
-      ]
-    }
-  },
-  "prefer-stable": true
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Silentz\\Charge\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Silentz\\Charge\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "download-dist": {
+            "url": "https://github.com/silentzco/statamic-charge/releases/download/{$version}/dist.tar.gz",
+            "path": "dist"
+        },
+        "statamic": {
+            "name": "Charge",
+            "description": "Charge addon"
+        },
+        "laravel": {
+            "providers": [
+                "Silentz\\Charge\\ServiceProvider"
+            ]
+        }
+    },
+    "prefer-stable": true
 }
