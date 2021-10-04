@@ -20,10 +20,15 @@ class SubscriptionController extends Controller
     public function store(CreateSubscriptionRequest $request): RedirectResponse
     {
         try {
-            $subscription = $request->user()
+            $subscriptionBuilder = $request->user()
                 ->newSubscription($request->name, $request->plan)
-                ->quantity($request->quantity)
-                ->create($request->payment_method);
+                ->quantity($request->quantity);
+            
+            if ($request->promo_code) {
+                $subscriptionBuilder->withPromotionCode($request->promo_code);   
+            }
+            
+            $subscription = $subscriptionBuilder->create($request->payment_method);
 
             return $this->withSuccess($subscription, $request);
         } catch (ApiErrorException $e) {
