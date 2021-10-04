@@ -11,6 +11,7 @@ class CreateSubscriptionRequest extends ChargeRequest
             'plan' => 'required',
             'payment_method' => 'required',
             'quantity' => 'sometimes|required|integer',
+            'promo_code' => 'sometimes|string',
         ];
     }
 }
