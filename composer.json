@@ -19,8 +19,8 @@
         "statamic/cms": "^3.3"
     },
     "require-dev": {
-        "doctrine/dbal": "^2.10",
-        "jasonmccreary/laravel-test-assertions": "^1.0",
+        "doctrine/dbal": "^3.3",
+        "jasonmccreary/laravel-test-assertions": "^2.0",
         "mockery/mockery": "~1.0",
         "nunomaduro/collision": "6.1",
         "orchestra/testbench": "^7.0",
