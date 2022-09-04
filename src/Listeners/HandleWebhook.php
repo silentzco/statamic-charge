@@ -8,6 +8,7 @@ use Silentz\Charge\Mail\CustomerSubscriptionCanceled;
 use Silentz\Charge\Mail\CustomerSubscriptionCreated;
 use Silentz\Charge\Mail\CustomerSubscriptionUpdated;
 use Silentz\Charge\Mail\CustomerUpdated;
+use Silentz\Charge\Mail\InvoicePaymentActionRequired;
 
 class HandleWebhook
 {
@@ -18,6 +19,7 @@ class HandleWebhook
             'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
             'customer.subscription.deleted' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
+            'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
         if (! $class = Arr::get($events, $event->payload['type'])) {
