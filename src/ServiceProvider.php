@@ -6,6 +6,7 @@ use Laravel\Cashier\Cashier;
 use Laravel\Cashier\CashierServiceProvider;
 use Laravel\Cashier\Events\WebhookHandled;
 use Silentz\Charge\Fieldtypes\Plans;
+use Silentz\Charge\Fieldtypes\Price;
 use Silentz\Charge\Fieldtypes\Roles;
 use Silentz\Charge\Listeners\HandleWebhook;
 use Silentz\Charge\Tags\Subscription;
@@ -17,6 +18,7 @@ use Statamic\Providers\AddonServiceProvider;
 class ServiceProvider extends AddonServiceProvider
 {
     protected $fieldtypes = [
+        Price::class,
         Plans::class,
         Roles::class,
     ];
@@ -39,10 +41,8 @@ class ServiceProvider extends AddonServiceProvider
         Subscriptions::class,
     ];
 
-    public function boot()
+    public function bootAddon()
     {
-        parent::boot();
-
         $this->bootFactories();
         $this->bootNav();
         $this->bootPermissions();
