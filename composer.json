@@ -29,7 +29,8 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Silentz\\Charge\\": "src"
+            "Silentz\\Charge\\": "src",
+            "Silentz\\Charge\\Database\\Factories\\": "database/factories"
         },
         "files": [
             "src/helpers.php"
