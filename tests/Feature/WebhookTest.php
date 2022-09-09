@@ -45,7 +45,7 @@ class WebhookTest extends FeatureTestCase
 
         $user = $this->createCustomer('add-roles');
         $user->stripe_id = 'add-role';
-        $user->swapPlans('plan-one');
+        $user->switchToPlan('test-plan');
 
         $user->save();
 

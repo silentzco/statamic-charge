@@ -150,7 +150,7 @@ class SubscriptionTest extends FeatureTestCase
             'name',
             'plan',
             'payment_method',
-        ]);
+        ], errorBag: 'charge');
     }
 
     /** @test */
@@ -324,7 +324,7 @@ class SubscriptionTest extends FeatureTestCase
                     'customer' => $customer->stripeId(),
                     'items' => [
                         'data' => [[
-                            'plan' => ['id' => static::$premiumPlanId],
+                            'price' => ['id' => static::$premiumPlanId],
                         ]],
                     ],
                 ],
