@@ -12,7 +12,7 @@ class WebhookController extends CashierController
     {
         $this
             ->getUserByStripeId(Arr::get($payload, 'data.object.customer'))
-            ->swapPlans(Arr::get($payload, 'data.object.items.data.0.price.id'));
+            ->switchToPlan(Arr::get($payload, 'data.object.items.data.0.price.id'));
 
         return $this->successMethod();
     }
@@ -22,10 +22,7 @@ class WebhookController extends CashierController
         $response = parent::handleCustomerSubscriptionUpdated($payload);
 
         optional($this->getUserByStripeId(Arr::get($payload, 'data.object.customer')))
-            ->swapPlans(
-                Arr::get($payload, 'data.object.plan.id'),
-                Arr::get($payload, 'data.previous_attributes.plan.id')
-            );
+            ->switchToPlan(Arr::get($payload, 'data.object.plan.id'));
 
         return $response;
     }

@@ -3,7 +3,6 @@
 namespace Silentz\Charge;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Laravel\Cashier\Billable;
 use Statamic\Facades\User;
 use Statamic\Support\Arr;
@@ -17,18 +16,12 @@ trait Chargeable
         return $query->whereNotNull('stripe_id');
     }
 
-    public function swapPlans($newPlan, $oldPlan = null)
+    public function switchToPlan($plan)
     {
         $roles = collect(config('charge.roles_and_plans'));
 
         User::fromUser($this)
-            ->removeRole($this->getRole($roles, $oldPlan))
-            ->assignRole($this->getRole($roles, $newPlan))
+            ->roles(Arr::get($roles->firstWhere('plan', $plan), 'role'))
             ->save();
-    }
-
-    private function getRole(Collection $roles, ?string $plan)
-    {
-        return Arr::get($roles->firstWhere('plan', $plan), 'role');
     }
 }
