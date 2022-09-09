@@ -34,18 +34,18 @@ class WebhookTest extends FeatureTestCase
         Role::make('test-role')->title('Test Role')->save();
 
         $roles[] = [
-                'plan' => 'test-plan',
-                'role' => 'test-role',
-            ];
+            'plan' => 'test-plan',
+            'role' => 'test-role',
+        ];
 
-        Config::set('charge.subscription.roles', $roles);
+        Config::set('charge.roles_and_plans', $roles);
 
         Mail::fake();
         Event::fake();
 
         $user = $this->createCustomer('add-roles');
         $user->stripe_id = 'add-role';
-        $user->swapPlans('plan-one');
+        $user->switchToPlan('test-plan');
 
         $user->save();
 
@@ -53,10 +53,10 @@ class WebhookTest extends FeatureTestCase
 
         Arr::set($data, 'type', 'customer.subscription.created');
         Arr::set($data, 'data.object.customer', 'add-role');
-        Arr::set($data, 'data.object.plan.id', 'test-plan');
+        Arr::set($data, 'data.object.items.data.0.price.id', 'test-plan');
 
         $this->postJson(route('statamic.charge.webhook'), $data)
-                ->assertOk();
+            ->assertOk();
 
         /** @var User */
         $statamicUser = User::fromUser($user);
@@ -80,7 +80,7 @@ class WebhookTest extends FeatureTestCase
             'role' => 'role-two',
         ];
 
-        Config::set('charge.subscription.roles', $roles);
+        Config::set('charge.roles_and_plans', $roles);
 
         Mail::fake();
         Event::fake();
@@ -94,10 +94,10 @@ class WebhookTest extends FeatureTestCase
         Arr::set($data, 'type', 'customer.subscription.updated');
         Arr::set($data, 'data.object.customer', 'add-role');
         Arr::set($data, 'data.object.plan.id', 'plan-two');
-        Arr::set($data, 'data.previous_attributes.plan.id', 'plan-one');
+        Arr::set($data, 'data.previous_attributes.price.id', 'plan-one');
 
         $this->postJson(route('statamic.charge.webhook'), $data)
-                ->assertOk();
+            ->assertOk();
 
         /** @var User */
         $statamicUser = User::fromUser($user);
@@ -109,24 +109,44 @@ class WebhookTest extends FeatureTestCase
     /** @test */
     public function events_do_send_email()
     {
-        Mail::fake();
+        config()->set('charge.emails.subscription_created.template', 'test-template');
+        config()->set('charge.emails.subscription_canceled.template', 'test-template');
+        config()->set('charge.emails.subscription_updated.template', 'test-template');
+        config()->set('charge.emails.customer_updated.template', 'test-template');
+        config()->set('charge.emails.invoice_payment_action_required.template', 'test-template');
+
+        view()->getFinder()->addLocation(__DIR__.'/../__fixtures__/resources/views');
+
+        $user = $this->createCustomer();
+        $user->update(['stripe_id' => 'test-customer']);
 
         /*
-customer.subscription.created - Occurs whenever a customer is signed up for a new plan.
-customer.subscription.deleted - Occurs whenever a customer's subscription ends.
-customer.subscription.trial_will_end - Occurs three days before a subscription's trial period is scheduled to end, or when a trial is ended immediately (using trial_end=now).
-customer.subscription.updated - Occurs whenever a subscription changes (e.g., switching from one plan to another, or changing the status from trial to active).        */
+            customer.subscription.created - Occurs whenever a customer is signed up for a new plan.
+            customer.subscription.canceled - Occurs whenever a customer's subscription ends.
+            customer.subscription.trial_will_end - Occurs three days before a subscription's trial period is scheduled to end, or when a trial is ended immediately (using trial_end=now).
+            customer.subscription.updated - Occurs whenever a subscription changes (e.g., switching from one plan to another, or changing the status from trial to active).
+        */
 
         $types = [
             'customer.subscription.created' => CustomerSubscriptionCreated::class,
             'customer.subscription.updated' => CustomerSubscriptionUpdated::class,
-            'customer.subscription.canceled' => CustomerSubscriptionCanceled::class,
+            'customer.subscription.deleted' => CustomerSubscriptionCanceled::class,
             'customer.updated' => CustomerUpdated::class,
             'invoice.payment_action_required' => InvoicePaymentActionRequired::class,
         ];
 
+        Mail::fake();
+
         foreach ($types as $type => $class) {
-            WebhookHandled::dispatch(['type' => $type]);
+            WebhookHandled::dispatch([
+                'type' => $type,
+                'data' => [
+                    'object' => [
+                        'customer' => 'test-customer',
+                        'id' => 'test-customer',
+                    ],
+                ],
+            ]);
 
             Mail::assertSent($class);
         }

@@ -20,7 +20,7 @@ roles_and_plans:
       field:
         max_items: 1
         mode: select
-        type: plans
+        type: stripe_price
         localizable: false
         width: 50
         listable: hidden

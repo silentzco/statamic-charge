@@ -18,12 +18,18 @@ class TagsTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withFactories(__DIR__.'/database/factories');
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->subscription = factory(Subscription::class)->make([
+        $this->subscription = Subscription::create([
+            'name' => fake()->word,
+            'user_id' => $this->user->id,
+            'stripe_id' => fake()->md5,
             'stripe_status' => 'active',
+            'stripe_plan' => fake()->md5,
+            'quantity' => 1,
+            'trial_ends_at' => fake()->creditCardExpirationDate,
+            'ends_at' => fake()->creditCardExpirationDate,
         ]);
 
         $this->user->subscriptions()->save($this->subscription);
@@ -35,13 +41,13 @@ class TagsTest extends FeatureTestCase
         $tag = (new SubscriptionTag())
             ->setParser(Antlers::parser())
             ->setContext([])
-            ->setParameters(['name' => $this->subscription->name]);
+            ->setParameters(['id' => $this->subscription->id]);
 
         $html = $tag->cancel();
 
         $this->assertStringContainsString(
-            route('statamic.charge.subscription.cancel', [
-                'name' => $this->subscription->name,
+            route('statamic.charge.subscriptions.destroy', [
+                'subscription' => $this->subscription->id,
             ]),
             $html
         );

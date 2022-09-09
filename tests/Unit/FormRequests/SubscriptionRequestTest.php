@@ -57,6 +57,7 @@ class SubscriptionRequestTest extends TestCase
                 'plan' => 'required',
                 'payment_method' => 'required',
                 'quantity' => 'sometimes|required|integer',
+                'promo_code' => 'sometimes|string',
             ],
             $request->rules()
         );
