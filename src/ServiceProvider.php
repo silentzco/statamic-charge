@@ -32,13 +32,15 @@ class ServiceProvider extends AddonServiceProvider
         'cp' => __DIR__.'/../routes/cp.php',
     ];
 
-    protected $scripts = [
-        __DIR__.'/../dist/js/cp.js',
-    ];
-
     protected $tags = [
         Subscription::class,
         Subscriptions::class,
+    ];
+
+    protected $vite = [
+        'input' => ['resources/js/cp.js'],
+        'publicDirectory' => 'dist',
+        'hotFile' => __DIR__.'/../dist/hot',
     ];
 
     public function bootAddon()

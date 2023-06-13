@@ -4,5 +4,6 @@ composer.lock
 /dist
 /node_modules
 /mix-manifest.json
+/package-lock.json
 /yarn.lock
 /cypress
