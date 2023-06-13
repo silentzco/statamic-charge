@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.1.1 - 2023-06-13
+
+### 🐛 Fixed
+
+- Switch to Vite [@edalzell](https://github.com/edalzell) (#42)
+
 ## v5.1.0 - 2023-06-13
 
 ### 🚀 New
